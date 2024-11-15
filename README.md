@@ -27,10 +27,13 @@ The application is design for librarians to manage their library. The applicatio
 ## Demo
 
 ## Future improvements
+  1. Add book comments
+  2. Add 
 
-## Contribution
+## Contributing
 
 ## Project status
+The project is on-going.
 
 ## Note
 The application is written for educational purposes.
