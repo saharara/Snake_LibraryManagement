@@ -28,7 +28,7 @@ The application is design for librarians to manage their library. The applicatio
 
 ## Future improvements
   1. Add book comments
-  2. Add 
+  2. Add wishlist.
 
 ## Contributing
 
