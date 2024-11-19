@@ -1,9 +1,11 @@
 .gradient {
-    -fx-background-color: linear-gradient(to bottom right, #082184, #2359be);
+    -fx-background-image: url('pictureStyle/login.png');
+    -fx-background-position: left;
+    -fx-background-repeat: no-repeat;
 }
 
 .white-form{
-    -fx-background-color: #fff;
+    -fx-background-color: transparent;
 }
 
 .head-label{
@@ -13,15 +15,15 @@
 }
 
 .login-btn{
-    -fx-background-color: linear-gradient(to bottom right, #178fcc, #0d4f70);
+    -fx-background-color: linear-gradient(to bottom right, #71d7e1, #0097b2);
     -fx-background-radius: 5px; // độ tròn
-    -fx-cursor: hand;   // thay đổi con trỏ chuột
-    -fx-text-fill: white; // màu chữ
-    -fx-font-size: 14px; // kích thước chữ
+-fx-cursor: hand;   // thay đổi con trỏ chuột
+-fx-text-fill: white; // màu chữ
+-fx-font-size: 14px; // kích thước chữ
 }
 
 .login-btn:hover{
-    -fx-background-color: linear-gradient(to bottom right, #24afef, #12759f);
+    -fx-background-color: linear-gradient(to bottom right, #71d7e1, #5aacb5);
 }
 
 .text-field{
@@ -35,13 +37,14 @@
 }
 
 .create-btn{
-    -fx-background-color: transparent;
+    -fx-background-color: #ffffff;
     -fx-cursor: hand;
-    -fx-text-fill: white;
-    -fx-border-color: white;
+    -fx-text-fill: #0097b2;
+    -fx-border-color: #0097b2;
     -fx-border-width: 1px;
+    -fx-background-radius: 5px;
 }
 .create-btn:hover{
     -fx-background-color: white;
-    -fx-text-fill: black;
+    -fx-text-fill: #000000;
 }
