@@ -108,6 +108,14 @@
                               <FontAwesomeIcon fill="#006370" glyphName="LIST" size="1.5em" text="" />
                            </graphic>
                         </Button>
+                        <Button fx:id="chat_bot" layoutX="7.0" layoutY="397.0" mnemonicParsing="false" onAction="#openSnakeBotWindow" prefHeight="37.0" prefWidth="115.0" style="-fx-background-color: transparent;" styleClass="nav-btn" stylesheets="@dashboardDesign.css" text="SnakeBot" textFill="#006379">
+                           <font>
+                              <Font name="Arial" size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontAwesomeIcon fill="#006370" glyphName="CUBE" selectionFill="#006370" size="2em" text="" />
+                           </graphic>
+                        </Button>
                      </children>
                   </AnchorPane>
                </left>
@@ -413,12 +421,12 @@
                         </AnchorPane>
                         <AnchorPane fx:id="issue_form" layoutX="2.0" layoutY="10.0" onMouseClicked="#availableBooksSelect" prefHeight="543.0" prefWidth="1027.0" visible="false">
                            <children>
-                              <Label alignment="CENTER" layoutY="7.0" prefHeight="43.0" prefWidth="1028.0" styleClass="nav-form" stylesheets="@dashboardDesign.css" text="Book Information" textAlignment="CENTER" textFill="WHITE">
+                              <Label alignment="CENTER" layoutY="7.0" prefHeight="43.0" prefWidth="1028.0" styleClass="nav-form1" stylesheets="@dashboardDesign.css" text="Book Information" textAlignment="CENTER" textFill="WHITE">
                                  <font>
                                     <Font name="Arial" size="25.0" />
                                  </font>
                               </Label>
-                              <Label alignment="CENTER" layoutY="235.0" prefHeight="43.0" prefWidth="1022.0" styleClass="nav-form" stylesheets="@dashboardDesign.css" text="User Information" textAlignment="CENTER" textFill="WHITE">
+                              <Label alignment="CENTER" layoutY="235.0" prefHeight="43.0" prefWidth="1022.0" styleClass="nav-form1" stylesheets="@dashboardDesign.css" text="User Information" textAlignment="CENTER" textFill="WHITE">
                                  <font>
                                     <Font name="Arial" size="25.0" />
                                  </font>

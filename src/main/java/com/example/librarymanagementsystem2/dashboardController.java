@@ -15,10 +15,12 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.OptionalDataException;
 import java.net.URL;
 import java.security.cert.Extension;
@@ -111,6 +113,8 @@ public class dashboardController implements Initializable {
     @FXML
     private Button issue_btn;
 
+    @FXML
+    private Button chat_bot;
     @FXML
     private Button listOfissue_btn;
     @FXML
@@ -534,33 +538,11 @@ public class dashboardController implements Initializable {
     }
 
     public void availableBooksSearch() {
+        String searchQuery = availableBooks_search.getText().toLowerCase();
+        List<bookData> searchResults = bookData.searchBooks(searchQuery);
 
-        FilteredList<bookData> filter = new FilteredList<>(availableBooksList, e -> true);
-
-        availableBooks_search.textProperty().addListener((observable, oldValue, newValue) -> {
-
-            filter.setPredicate(predicateBookData -> {
-
-                if (newValue == null || newValue.isEmpty()) {
-                    return true;
-                }
-
-                String searchKey = newValue.toLowerCase();
-
-                if (predicateBookData.getIsbn().toLowerCase().contains(searchKey)) {
-                    return true;
-                } else if (predicateBookData.getTitle().toLowerCase().contains(searchKey)) {
-                    return true;
-                } else if (predicateBookData.getAuthor().toLowerCase().contains(searchKey)) {
-                    return true;
-                } else if (predicateBookData.getGenre().toLowerCase().contains(searchKey)) {
-                    return true;
-                }
-                return false;
-            });
-        });
-
-        SortedList<bookData> sortList = new SortedList(filter);
+        FilteredList<bookData> filter = new FilteredList<>(FXCollections.observableArrayList(searchResults), e -> true);
+        SortedList<bookData> sortList = new SortedList<>(filter);
         sortList.comparatorProperty().bind(availableBooks_tableView.comparatorProperty());
         availableBooks_tableView.setItems(sortList);
     }
@@ -612,7 +594,7 @@ public class dashboardController implements Initializable {
         bookData bookD = availableBooks_tableView.getSelectionModel().getSelectedItem();
         int num = availableBooks_tableView.getSelectionModel().getSelectedIndex();
 
-        if(num < 0) {
+        if (num < 0) {
             return;
         }
 
@@ -622,14 +604,9 @@ public class dashboardController implements Initializable {
         availableBooks_genre.setText(bookD.getGenre());
         availableBooks_date.setValue(LocalDate.parse(String.valueOf(bookD.getDate())));
         availableBooks_quantity.setText(String.valueOf(bookD.getQuantity()));
-
-        getData.path = bookD.getImage();
-
-        String uri = "file:" + bookD.getImage();
-
-        image = new Image(uri, 112, 137, false, true);
+        String imageUrl = bookD.getImage();
+        Image image = new Image(imageUrl, 112, 137, false, true);
         availableBooks_imageView.setImage(image);
-
     }
 
     public ObservableList<User> usersListData() throws SQLException {
@@ -1529,6 +1506,19 @@ public class dashboardController implements Initializable {
             issuesShowListData();
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        }
+    }
+    public void openSnakeBotWindow() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("ChatBot.fxml"));
+            StackPane snakeBotRoot = loader.load();
+            Stage newStage = new Stage();
+            newStage.setTitle("SnakeBot");
+            Scene newScene = new Scene(snakeBotRoot);
+            newStage.setScene(newScene);
+            newStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
