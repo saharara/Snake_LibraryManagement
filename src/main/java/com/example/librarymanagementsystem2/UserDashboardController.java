@@ -562,32 +562,40 @@ public class UserDashboardController extends DashboardBaseController implements 
     }
 
     public void setAudio() throws UnsupportedAudioFileException, IOException, LineUnavailableException {
-        URL music = getClass().getResource("com/example/librarymanagementsystem2/music/LikeADream.wav");
-        File file = new File(music.toExternalForm());
-
-        AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(file);
+        // Load tài nguyên âm thanh
+        URL music = getClass().getResource("/com/example/librarymanagementsystem2/music/chrismas.wav");
+        if (music == null) {
+            throw new IllegalArgumentException("Music file not found!");
+        }
+        AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(music);
         Clip clip = AudioSystem.getClip();
         clip.open(audioInputStream);
-
+        clip.loop(Clip.LOOP_CONTINUOUSLY); // make it run infinity
         clip.start();
 
+        // Load hình ảnh
         URL onURL = getClass().getResource("/com/example/librarymanagementsystem2/pictureStyle/audioOn.jpg");
         URL offURL = getClass().getResource("/com/example/librarymanagementsystem2/pictureStyle/audioOff.png");
+        if (onURL == null || offURL == null) {
+            throw new IllegalArgumentException("One or more image files not found!");
+        }
 
         Image image1 = new Image(onURL.toExternalForm());
         Image image2 = new Image(offURL.toExternalForm());
+        audioImage.setImage(image1); // Đặt hình ảnh mặc định
 
-        audioImage.setImage(image1);
+        // Xử lý hành vi nút chuyển đổi âm thanh
+        audio.setSelected(false); // Đặt trạng thái mặc định
         audio.setOnAction(event -> {
             if (audio.isSelected()) {
-                audioImage.setImage(image2);  // Show image2 when selected
+                audioImage.setImage(image2);
+                clip.stop(); // Tắt âm thanh
             } else {
-                audioImage.setImage(image1);  // Show image1 when not selected
+                audioImage.setImage(image1);
+                clip.start(); // Phát lại âm thanh
             }
         });
     }
-
-
 
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
