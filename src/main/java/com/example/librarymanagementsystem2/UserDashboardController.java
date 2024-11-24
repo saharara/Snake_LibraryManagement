@@ -8,7 +8,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.*;
@@ -20,18 +19,22 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import javax.sound.sampled.*;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class UserDashboardController extends DashboardBaseController implements Initializable {
+    @FXML
+    private ToggleButton audio;
+
+    @FXML
+    private ImageView audioImage;
+
     @FXML
     private Button close;
 
@@ -151,6 +154,9 @@ public class UserDashboardController extends DashboardBaseController implements 
 
     @FXML
     private AnchorPane userChartPane;
+
+    @FXML
+    private ToggleButton audioStatus;
 
     private Image image;
 
@@ -555,15 +561,45 @@ public class UserDashboardController extends DashboardBaseController implements 
         userChart.getData().addAll(series1, series2);
     }
 
+    public void setAudio() throws UnsupportedAudioFileException, IOException, LineUnavailableException {
+        URL music = getClass().getResource("com/example/librarymanagementsystem2/music/LikeADream.wav");
+        File file = new File(music.toExternalForm());
+
+        AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(file);
+        Clip clip = AudioSystem.getClip();
+        clip.open(audioInputStream);
+
+        clip.start();
+
+        URL onURL = getClass().getResource("/com/example/librarymanagementsystem2/pictureStyle/audioOn.jpg");
+        URL offURL = getClass().getResource("/com/example/librarymanagementsystem2/pictureStyle/audioOff.png");
+
+        Image image1 = new Image(onURL.toExternalForm());
+        Image image2 = new Image(offURL.toExternalForm());
+
+        audioImage.setImage(image1);
+        audio.setOnAction(event -> {
+            if (audio.isSelected()) {
+                audioImage.setImage(image2);  // Show image2 when selected
+            } else {
+                audioImage.setImage(image1);  // Show image1 when not selected
+            }
+        });
+    }
+
+
 
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
+            setAudio();
             userBarChart();
             getAva();
             displayUsername();
             availableBooksShowListData();
             borrowedShowList();
         } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

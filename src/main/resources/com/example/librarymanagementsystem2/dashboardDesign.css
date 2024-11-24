@@ -1,3 +1,7 @@
+.audio-toggle{
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+}
 .top-form{
     -fx-background-color: white;
     -fx-border-color: black;

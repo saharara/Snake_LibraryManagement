@@ -5,6 +5,7 @@ module com.example.librarymanagementsystem2 {
     requires com.dlsc.formsfx;
     requires java.sql;
     requires transitive fontawesomefx;
+    requires java.desktop;
 
     opens com.example.librarymanagementsystem2 to javafx.fxml;
     exports com.example.librarymanagementsystem2;

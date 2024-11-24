@@ -11,6 +11,7 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -53,6 +54,11 @@
                     <left>
                         <AnchorPane prefHeight="555.0" prefWidth="199.0" styleClass="nav-form" stylesheets="@dashboardDesign.css" BorderPane.alignment="CENTER">
                             <children>
+                        <Button layoutX="61.0" layoutY="474.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="30.0" styleClass="audio-toggle" stylesheets="@dashboardDesign.css">
+                           <graphic>
+                              <FontAwesomeIcon glyphName="FORWARD" />
+                           </graphic>
+                        </Button>
                                 <Label fx:id="username" alignment="CENTER" layoutX="16.0" layoutY="155.0" prefHeight="60.0" prefWidth="163.0" text="User" textAlignment="CENTER" textFill="#006370">
                                     <font>
                                         <Font name="Arial Bold" size="20.0" />
@@ -92,6 +98,11 @@
                                         <FontAwesomeIcon fill="#006370" glyphName="DOWNLOAD" size="1.5em" text="" />
                            </graphic>
                                 </Button>
+                        <ToggleButton fx:id="audio" layoutX="14.0" layoutY="474.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="30.0" styleClass="audio-toggle" stylesheets="@dashboardDesign.css">
+                           <graphic>
+                              <ImageView fx:id="audioImage" fitHeight="35.0" fitWidth="31.0" pickOnBounds="true" preserveRatio="true" />
+                           </graphic>
+                        </ToggleButton>
                             </children>
                         </AnchorPane>
                     </left>
