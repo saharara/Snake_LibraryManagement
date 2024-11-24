@@ -239,78 +239,89 @@ public class dashboardController extends DashboardBaseController implements Init
     private Image image;
 
     public void availableBooksAdd() throws SQLException {
-        if (availableBooks_ISBN.getText().isEmpty()
-        || availableBooks_title.getText().isEmpty()
-        || availableBooks_author.getText().isEmpty()
-        || availableBooks_genre.getText().isEmpty()
-        || availableBooks_quantity.getText().isEmpty()
-        || availableBooks_date.getValue() == null
-        || getData.path == "" || getData.path == null) {
+        if (availableBooks_ISBN.getText().isEmpty() ||
+                availableBooks_title.getText().isEmpty() ||
+                availableBooks_author.getText().isEmpty() ||
+                availableBooks_genre.getText().isEmpty() ||
+                availableBooks_quantity.getText().isEmpty()) {
 
-            showAlert(Alert.AlertType.ERROR, "Error Message", "Please fill all blank fields");
-        } else {
-            connect = database.connectDB();
-            connect.setAutoCommit(false);
-            try {
-                // kiểm tra xem isbn tồn tại chưa
-                String sqlcheck = "SELECT isbn FROM book WHERE isbn = ?";
-                pst = connect.prepareStatement(sqlcheck);
+            showAlert(Alert.AlertType.ERROR, "Error Message", "Please fill all required fields!");
+            return;
+        }
+
+        connect = database.connectDB();
+        connect.setAutoCommit(false);
+
+        try {
+            // Check if ISBN already exists
+            String sqlCheck = "SELECT isbn FROM book WHERE isbn = ?";
+            pst = connect.prepareStatement(sqlCheck);
+            pst.setString(1, availableBooks_ISBN.getText());
+            rs = pst.executeQuery();
+
+            if (rs.next()) {
+                showAlert(Alert.AlertType.ERROR, "Error Message",
+                        "Book ISBN: " + availableBooks_ISBN.getText() + " already exists!");
+            } else {
+                // Insert book data
+                String sqlInsert = "INSERT INTO book(isbn, title, author, genre, quantity, remain, issued) VALUES (?,?,?,?,?,?,?)";
+                pst = connect.prepareStatement(sqlInsert);
                 pst.setString(1, availableBooks_ISBN.getText());
-                rs = pst.executeQuery();
+                pst.setString(2, availableBooks_title.getText());
+                pst.setString(3, availableBooks_author.getText());
+                pst.setString(4, availableBooks_genre.getText());
+                pst.setInt(5, Integer.parseInt(availableBooks_quantity.getText()));
+                pst.setInt(6, Integer.parseInt(availableBooks_quantity.getText()));
+                pst.setInt(7, 0);
 
-                if (rs.next()) {
+                pst.executeUpdate();
 
-                    showAlert(Alert.AlertType.ERROR, "Error Message", "Book ISBN: "
-                            + availableBooks_ISBN.getText() + " was already exist!");
-                } else {
-
-                    String sql = "INSERT INTO book VALUES (?,?,?,?,?,?,?,?,?)";
-                    pst = connect.prepareStatement(sql);
-                    pst.setString(1, availableBooks_ISBN.getText());
-                    pst.setString(2, availableBooks_title.getText());
-                    pst.setString(3, availableBooks_author.getText());
-                    pst.setString(4, availableBooks_genre.getText());
-
-                    String uri = getData.path;
-                    uri = uri.replace("\\", "\\\\");
-                    pst.setString(5, uri);
-
-                    pst.setString(6, String.valueOf(availableBooks_date.getValue()));
-                    pst.setInt(7, Integer.valueOf(availableBooks_quantity.getText()));
-                    pst.setInt(8, Integer.valueOf(availableBooks_quantity.getText()));
-                    pst.setInt(9, 0);
-
-
+                // Update publication date if provided
+                if (availableBooks_date.getValue() != null) {
+                    String sqlUpdateDate = "UPDATE book SET pub_date = ? WHERE isbn = ?";
+                    pst = connect.prepareStatement(sqlUpdateDate);
+                    pst.setString(1, availableBooks_date.getValue().toString());
+                    pst.setString(2, availableBooks_ISBN.getText());
                     pst.executeUpdate();
-                    connect.commit(); // commit de update vao csdl
-
-
-                    // thông báo thêm thành công
-
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-
-                    showAlert(Alert.AlertType.INFORMATION, "Information Message", "Successfully Added!");
-
-                    availableBooksShowListData(); // show ra bảng
-                    availableBooksClear(); // clear fields
                 }
-            } catch (Exception e) {
-                connect.rollback();
-                e.printStackTrace();
+
+                // Update image path if provided
+                if (getData.path != null && !getData.path.isEmpty()) {
+                    String sqlUpdateImage = "UPDATE book SET image = ? WHERE isbn = ?";
+                    pst = connect.prepareStatement(sqlUpdateImage);
+                    String uri = getData.path.replace("\\", "\\\\");
+                    pst.setString(1, uri);
+                    pst.setString(2, availableBooks_ISBN.getText());
+                    pst.executeUpdate();
+                }
+
+                connect.commit(); // Commit transaction
+                showAlert(Alert.AlertType.INFORMATION, "Information Message", "Successfully Added!");
+
+                // Refresh data and clear fields
+                availableBooksShowListData();
+                availableBooksClear();
             }
+        } catch (Exception e) {
+            connect.rollback(); // Rollback on error
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Error Message", "Failed to add book. Please try again.");
+        } finally {
+            if (pst != null) pst.close();
+            if (rs != null) rs.close();
+            if (connect != null) connect.setAutoCommit(true); // Reset auto-commit
         }
     }
+
 
     public void setAvailableBooksUpdate() throws SQLException {
         if (availableBooks_ISBN.getText().isEmpty()
                 || availableBooks_title.getText().isEmpty()
                 || availableBooks_author.getText().isEmpty()
                 || availableBooks_genre.getText().isEmpty()
-                || availableBooks_quantity.getText().isEmpty()
-                || availableBooks_date.getValue() == null
-                || getData.path == "" || getData.path == null) {
+                || availableBooks_quantity.getText().isEmpty()) {
 
-            showAlert(Alert.AlertType.ERROR, "Error Message", "Please fill all blank fields");
+            showAlert(Alert.AlertType.ERROR, "Error Message", "Please fill all required blank fields");
         } else {
             // check trong csdl có isbn đấy không:
             connect = database.connectDB();
@@ -342,23 +353,16 @@ public class dashboardController extends DashboardBaseController implements Init
 
                         if (option.get().equals(ButtonType.OK)) {
                             // update ở bảng book
-                            String sqlUpdate = "UPDATE book SET title = ?, author = ?, genre = ?, image = ?" +
-                                    ", pub_date = ?, quantity = ?, remain = ? " +
+                            String sqlUpdate = "UPDATE book SET title = ?, author = ?, genre = ?, quantity = ?, remain = ? " +
                                     "WHERE isbn = ?";
                             pst = connect.prepareStatement(sqlUpdate);
                             pst.setString(1, availableBooks_title.getText());
                             pst.setString(2, availableBooks_author.getText());
                             pst.setString(3, availableBooks_genre.getText());
-                            pst.setString(8,availableBooks_ISBN.getText());
 
-                            String uri = getData.path;
-                            uri = uri.replace("\\", "\\\\");
-                            pst.setString(4, uri);
+                            pst.setInt(4, Integer.parseInt(availableBooks_quantity.getText()));
 
-                            pst.setString(5, String.valueOf(availableBooks_date.getValue()));
-                            pst.setInt(6, Integer.parseInt(availableBooks_quantity.getText()));
-
-                            // tinh so sach con lai
+                            // find the remain books
                             int rmain = 0;
                             String sqlremain = "SELECT issued FROM book WHERE isbn = ?";
                             pst1 = connect1.prepareStatement(sqlremain);
@@ -368,7 +372,9 @@ public class dashboardController extends DashboardBaseController implements Init
                             rmain = rs1.getInt("issued"); // issued
                             int sumbook = Integer.parseInt(availableBooks_quantity.getText());
                             rmain = sumbook - rmain; // remain
-                            pst.setInt(7, rmain);
+
+                            pst.setInt(5, rmain);
+                            pst.setString(6,availableBooks_ISBN.getText());
 
                             pst.executeUpdate();
 
@@ -378,6 +384,25 @@ public class dashboardController extends DashboardBaseController implements Init
                             pst.setString(1, availableBooks_title.getText());
                             pst.setString(2,availableBooks_ISBN.getText());
                             pst.executeUpdate();
+
+                            // Update publication date if provided
+                            if (availableBooks_date.getValue() != null) {
+                                String sqlUpdateDate = "UPDATE book SET pub_date = ? WHERE isbn = ?";
+                                pst = connect.prepareStatement(sqlUpdateDate);
+                                pst.setString(1, availableBooks_date.getValue().toString());
+                                pst.setString(2, availableBooks_ISBN.getText());
+                                pst.executeUpdate();
+                            }
+
+                            // Update image path if provided
+                            if (getData.path != null && !getData.path.isEmpty()) {
+                                String sqlUpdateImage = "UPDATE book SET image = ? WHERE isbn = ?";
+                                pst = connect.prepareStatement(sqlUpdateImage);
+                                String uri = getData.path.replace("\\", "\\\\");
+                                pst.setString(1, uri);
+                                pst.setString(2, availableBooks_ISBN.getText());
+                                pst.executeUpdate();
+                            }
 
                             showAlert(Alert.AlertType.INFORMATION, "Information Message", "Successfully Updated!");
 
@@ -391,8 +416,6 @@ public class dashboardController extends DashboardBaseController implements Init
                         alert.setContentText("Quantity must be greater than Issued");
                         alert.showAndWait();
                     }
-
-
 
                 // nếu không thì thông báo lỗi
                 } else {
@@ -413,9 +436,7 @@ public class dashboardController extends DashboardBaseController implements Init
                 || availableBooks_title.getText().isEmpty()
                 || availableBooks_author.getText().isEmpty()
                 || availableBooks_genre.getText().isEmpty()
-                || availableBooks_quantity.getText().isEmpty()
-                || availableBooks_date.getValue() == null
-                || getData.path == "" || getData.path == null) {
+                || availableBooks_quantity.getText().isEmpty()) {
 
             showAlert(Alert.AlertType.ERROR, "Error Message", "Please fill all blank fields");
         } else {
@@ -589,15 +610,21 @@ public class dashboardController extends DashboardBaseController implements Init
         availableBooks_title.setText(bookD.getTitle());
         availableBooks_author.setText(bookD.getAuthor());
         availableBooks_genre.setText(bookD.getGenre());
-        availableBooks_date.setValue(LocalDate.parse(String.valueOf(bookD.getDate())));
+        if(bookD.getDate() != null) {
+            availableBooks_date.setValue(LocalDate.parse(String.valueOf(bookD.getDate())));
+        } else availableBooks_date.setValue(null);
+
         availableBooks_quantity.setText(String.valueOf(bookD.getQuantity()));
 
-        getData.path = bookD.getImage();
+        if(bookD.getImage() != null) {
+            getData.path = bookD.getImage();
 
-        String uri = "file:" + bookD.getImage();
+            String uri = "file:" + bookD.getImage();
 
-        image = new Image(uri, 112, 137, false, true);
-        availableBooks_imageView.setImage(image);
+            image = new Image(uri, 112, 137, false, true);
+            availableBooks_imageView.setImage(image);
+
+        } else availableBooks_imageView.setImage(null);
 
     }
 
@@ -682,12 +709,11 @@ public class dashboardController extends DashboardBaseController implements Init
         if (user_msv.getText().isEmpty()
                 || user_name.getText().isEmpty()
                 || user_phoneNumber.getText().isEmpty()
-                || user_email.getText().isEmpty()
-                || getData.path == "" || getData.path == null) {
+                || user_email.getText().isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error Message");
             alert.setHeaderText(null);
-            alert.setContentText("Please fill all blank fields");
+            alert.setContentText("Please fill all required blank fields");
             alert.showAndWait();
         } else {
             connect = database.connectDB();
@@ -706,21 +732,27 @@ public class dashboardController extends DashboardBaseController implements Init
                     alert.setContentText("Student code: " + user_msv.getText() + " was already exist!");
                     alert.showAndWait();
                 } else {
-
-                    String sql = "INSERT INTO user(msv, name, phonenumber, email, image) VALUES (?,?,?,?,?)";
+                    String sql = "INSERT INTO user(msv, name, phonenumber, email) VALUES (?,?,?,?)";
                     pst = connect.prepareStatement(sql);
                     pst.setString(1, user_msv.getText());
                     pst.setString(2, user_name.getText());
                     pst.setString(3, user_phoneNumber.getText());
                     pst.setString(4, user_email.getText());
 
-                    String uri = getData.path;
-                    uri = uri.replace("\\", "\\\\");
-                    pst.setString(5, uri);
-
                     pst.executeUpdate();
                     connect.commit(); // commit de update vao csdl
                     pst.close();
+
+                    if(getData.path != "" || getData.path != null) {
+                        String sqlI = "UPDATE user SET image = ? WHERE msv = ?";
+                        pst = connect.prepareStatement(sqlI);
+                        String uri = getData.path;
+                        uri = uri.replace("\\", "\\\\");
+                        pst.setString(1, uri);
+                        pst.setString(2, user_msv.getText());
+                        pst.executeUpdate();
+                        connect.commit();
+                    }
 
                     String sqlSetPass = "UPDATE user SET password = msv WHERE msv = ?";
 
@@ -751,8 +783,7 @@ public class dashboardController extends DashboardBaseController implements Init
         if (user_msv.getText().isEmpty()
                 || user_name.getText().isEmpty()
                 || user_phoneNumber.getText().isEmpty()
-                || user_email.getText().isEmpty()
-                || getData.path == "" || getData.path == null) {
+                || user_email.getText().isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error Message");
             alert.setHeaderText(null);
@@ -772,20 +803,26 @@ public class dashboardController extends DashboardBaseController implements Init
                             , "Are you sure you want to UPDATE student with student code: "+ user_msv.getText() +"?");
 
                     if (option.get().equals(ButtonType.OK)) {
-                        String sqlUpdate = "UPDATE user SET name = ?, phonenumber = ?, email = ?, image = ? " +
+                        String sqlUpdate = "UPDATE user SET name = ?, phonenumber = ?, email = ? " +
                                 "WHERE msv = ?";
                         pst = connect.prepareStatement(sqlUpdate);
                         pst.setString(1, user_name.getText());
                         pst.setString(2, user_phoneNumber.getText());
                         pst.setString(3, user_email.getText());
-
-                        String uri = getData.path;
-                        uri = uri.replace("\\", "\\\\");
-                        pst.setString(4, uri);
-
-                        pst.setString(5, user_msv.getText());
+                        pst.setString(4, user_msv.getText());
 
                         pst.executeUpdate();
+
+                        if(getData.path != "" && getData.path != null) {
+                            String sqlI = "UPDATE user SET image = ? WHERE msv = ?";
+                            pst = connect.prepareStatement(sqlI);
+                            String uri = getData.path;
+                            uri = uri.replace("\\", "\\\\");
+                            pst.setString(1, uri);
+                            pst.setString(2, user_msv.getText());
+                            pst.executeUpdate();
+                            connect.commit();
+                        }
 
                         // update ở bảng issue
                         String sqlUpdate1 = "UPDATE issue SET name = ? " +
