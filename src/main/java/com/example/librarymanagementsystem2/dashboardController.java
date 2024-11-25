@@ -511,7 +511,20 @@ public class dashboardController extends DashboardBaseController implements Init
         getData.path = "";
         availableBooks_imageView.setImage(null);
     }
+    public void availableBooksInsertImage() { // ham cho nut import
 
+        FileChooser open = new FileChooser();
+        open.setTitle("Open Image File");
+        open.getExtensionFilters().add(new FileChooser.ExtensionFilter("File Image", "*jpg", "*png"));
+
+        File file = open.showOpenDialog(main_form.getScene().getWindow()); // đợi người dùng chọn file
+
+        if (file != null) {
+            getData.path = file.getAbsolutePath();
+            image = new Image(file.toURI().toString(), 112, 137, false, true);
+            availableBooks_imageView.setImage(image);
+        }
+    }
     public void usersSearch() {
         FilteredList<User> filter = new FilteredList<>(usersList, e -> true);
 
