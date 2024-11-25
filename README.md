@@ -28,7 +28,11 @@ The application is design for librarians to manage their library. The applicatio
 
 ## Future improvements
   1. Add book comments
-  2. Add wishlist.
+  2. Add wishlist
+  3. Add function to let users play their own audio
+  4. Add more seasonal event effects
+  5. Improve SnakeBot
+  6. 
 
 ## Contributing
 

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<StackPane prefWidth="400" prefHeight="500"
+           xmlns="http://javafx.com/javafx/11.0.1"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.example.librarymanagementsystem2.ChatBotController">
+
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+
+    <VBox spacing="10" alignment="CENTER" StackPane.alignment="CENTER">
+        <Label text="Chat with Snakebot" style="-fx-font-size: 18px;"/>
+
+        <TextArea fx:id="chatArea"
+                  VBox.vgrow="ALWAYS"
+                  wrapText="true"
+                  style="-fx-font-family: 'Arial';">
+        </TextArea>
+
+        <HBox spacing="10">
+            <TextField fx:id="inputField"
+                       HBox.hgrow="ALWAYS"
+                       promptText="Type your message here..."/>
+
+            <Button fx:id="sendButton"
+                    text="Send"
+                    defaultButton="true"/>
+        </HBox>
+    </VBox>
+
+</StackPane>
