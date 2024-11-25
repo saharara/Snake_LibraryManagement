@@ -51,7 +51,7 @@
                   </AnchorPane>
                </top>
                <left>
-                  <AnchorPane prefHeight="555.0" prefWidth="199.0" styleClass="nav-form" stylesheets="@dashboardDesign.css" BorderPane.alignment="CENTER">
+                  <AnchorPane fx:id="snowContainer" onMouseExited="#initialize" onMouseMoved="#initialize" prefHeight="555.0" prefWidth="199.0" styleClass="snow-container" stylesheets="@dashboardDesign.css" BorderPane.alignment="CENTER">
                      <children>
                         <Label fx:id="username" alignment="CENTER" layoutX="17.0" layoutY="153.0" prefHeight="23.0" prefWidth="163.0" text="Admin" textFill="#006370">
                            <font>
@@ -190,12 +190,12 @@
                                        </styleClass>
                                        <children>
                                           <AreaChart layoutX="14.0" layoutY="14.0" prefHeight="333.3333333333333" prefWidth="488.0" title="Total Issued Books Chart" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                            <xAxis>
-                                              <CategoryAxis side="BOTTOM" />
-                                            </xAxis>
-                                            <yAxis>
-                                              <NumberAxis side="LEFT" />
-                                            </yAxis>
+                                             <xAxis>
+                                                <CategoryAxis side="BOTTOM" />
+                                             </xAxis>
+                                             <yAxis>
+                                                <NumberAxis side="LEFT" />
+                                             </yAxis>
                                           </AreaChart>
                                        </children>
                                     </AnchorPane>
@@ -206,12 +206,12 @@
                                        </styleClass>
                                        <children>
                                           <BarChart layoutX="-100.0" layoutY="-67.0" prefHeight="333.3333333333333" prefWidth="400.0" title="Users Chart" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                            <xAxis>
-                                              <CategoryAxis side="BOTTOM" />
-                                            </xAxis>
-                                            <yAxis>
-                                              <NumberAxis side="LEFT" />
-                                            </yAxis>
+                                             <xAxis>
+                                                <CategoryAxis side="BOTTOM" />
+                                             </xAxis>
+                                             <yAxis>
+                                                <NumberAxis side="LEFT" />
+                                             </yAxis>
                                           </BarChart>
                                        </children>
                                     </AnchorPane>
@@ -312,16 +312,16 @@
                                     </TextField>
                                     <FontAwesomeIcon fill="#8b8b8b" glyphName="SEARCH" layoutX="22.0" layoutY="35.0" size="1.5em" />
                                     <TableView fx:id="availableBooks_tableView" layoutX="14.0" layoutY="63.0" onMouseClicked="#availableBooksSelect" prefHeight="449.0" prefWidth="688.0">
-                                      <columns>
-                                        <TableColumn fx:id="availableBooks_col_ISBN" prefWidth="96.00006103515625" text="Book ISBN" />
-                                        <TableColumn fx:id="availableBooks_col_title" prefWidth="167.99996948242188" text="Book Title" />
+                                       <columns>
+                                          <TableColumn fx:id="availableBooks_col_ISBN" prefWidth="96.00006103515625" text="Book ISBN" />
+                                          <TableColumn fx:id="availableBooks_col_title" prefWidth="167.99996948242188" text="Book Title" />
                                           <TableColumn fx:id="availableBooks_col_author" prefWidth="90.0" text="Author" />
                                           <TableColumn fx:id="availableBooks_col_genre" prefWidth="92.0" text="Genre" />
                                           <TableColumn fx:id="availableBooks_col_pubdate" prefWidth="91.99993896484375" text="Published Date" />
                                           <TableColumn fx:id="availableBooks_col_quantity" prefWidth="56.0" text="Quantity" />
                                           <TableColumn fx:id="availableBooks_col_remain" prefWidth="50.0" text="Remain" />
                                           <TableColumn fx:id="availableBooks_col_issued" prefWidth="41.3333740234375" text="Issued" />
-                                      </columns>
+                                       </columns>
                                     </TableView>
                                  </children>
                               </AnchorPane>
@@ -482,7 +482,7 @@
                         </AnchorPane>
                         <AnchorPane fx:id="listIssue_form" layoutX="2.0" layoutY="4.0" onMouseClicked="#availableBooksSelect" prefHeight="549.0" prefWidth="1029.0" visible="false">
                            <children>
-                              <Label alignment="CENTER" layoutX="5.0" layoutY="7.0" prefHeight="43.0" prefWidth="1022.0" styleClass="nav-form" stylesheets="@dashboardDesign.css" text="All Issued Books" textAlignment="CENTER" textFill="WHITE">
+                              <Label alignment="CENTER" layoutX="5.0" layoutY="7.0" prefHeight="43.0" prefWidth="1022.0" styleClass="nav-form1" stylesheets="@dashboardDesign.css" text="All Issued Books" textAlignment="CENTER" textFill="#006370">
                                  <font>
                                     <Font name="Arial" size="25.0" />
                                  </font>

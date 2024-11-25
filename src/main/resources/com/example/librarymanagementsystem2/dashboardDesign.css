@@ -22,10 +22,6 @@
 .minimize:hover{
     -fx-background-color: #ddd;
 }
-.nav-form{
-    -fx-background-image: url('pictureStyle/dashboard.png');
-    -fx-background-repeat: no-repeat;
-}
 .nav-btn{
     -fx-background-color: transparent;
     -fx-cursor: hand;
@@ -114,4 +110,8 @@
 }
 .nav-form1{
     -fx-background-color: linear-gradient(to bottom right, #71d7e1, #0198b3);
+}
+.snow-container {
+    -fx-background-image: url('pictureStyle/dashboard.png');
+    -fx-background-repeat: no-repeat;
 }
