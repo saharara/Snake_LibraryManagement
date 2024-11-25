@@ -539,9 +539,37 @@ public class dashboardController implements Initializable {
 
     public void availableBooksSearch() {
         String searchQuery = availableBooks_search.getText().toLowerCase();
-        List<bookData> searchResults = bookData.searchBooks(searchQuery);
 
-        FilteredList<bookData> filter = new FilteredList<>(FXCollections.observableArrayList(searchResults), e -> true);
+        // Get books from API
+        List<bookData> apiResults = bookData.searchBooks(searchQuery);
+
+        // Combine API results with existing database books
+        ObservableList<bookData> combinedBooks = FXCollections.observableArrayList();
+        combinedBooks.addAll(availableBooksList); // Add database books
+        combinedBooks.addAll(apiResults);         // Add API results
+
+        // Create filtered list
+        FilteredList<bookData> filter = new FilteredList<>(combinedBooks, e -> true);
+
+        // Add listener for search text changes
+        availableBooks_search.textProperty().addListener((observable, oldValue, newValue) -> {
+            filter.setPredicate(predicateBookData -> {
+                // If search text is empty, show all books
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+
+                String searchKey = newValue.toLowerCase();
+
+                // Search in all fields
+                return predicateBookData.getIsbn().toLowerCase().contains(searchKey) ||
+                        predicateBookData.getTitle().toLowerCase().contains(searchKey) ||
+                        predicateBookData.getAuthor().toLowerCase().contains(searchKey) ||
+                        predicateBookData.getGenre().toLowerCase().contains(searchKey);
+            });
+        });
+
+        // Create and bind sorted list
         SortedList<bookData> sortList = new SortedList<>(filter);
         sortList.comparatorProperty().bind(availableBooks_tableView.comparatorProperty());
         availableBooks_tableView.setItems(sortList);
@@ -602,8 +630,15 @@ public class dashboardController implements Initializable {
         availableBooks_title.setText(bookD.getTitle());
         availableBooks_author.setText(bookD.getAuthor());
         availableBooks_genre.setText(bookD.getGenre());
-        availableBooks_date.setValue(LocalDate.parse(String.valueOf(bookD.getDate())));
+        try {
+            availableBooks_date.setValue(LocalDate.parse(String.valueOf(bookD.getDate())));
+        } catch (Exception e) {
+            System.out.println("loi get ngay");
+        }
         availableBooks_quantity.setText(String.valueOf(bookD.getQuantity()));
+
+        getData.path = bookD.getImage();
+
         String imageUrl = bookD.getImage();
         Image image = new Image(imageUrl, 112, 137, false, true);
         availableBooks_imageView.setImage(image);
