@@ -17,7 +17,7 @@ public class HelloApplication extends Application {
 
         stage.setTitle("Snake Library Management System");
 
-        stage.setMinHeight(450); // kích thước tôi thiểu
+        stage.setMinHeight(450);
         stage.setMinWidth(615);
 
         stage.setScene(scene);
