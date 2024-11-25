@@ -31,13 +31,13 @@ The application is designed for librarians to manage their library. The applicat
   - User Management: Manages the list of library users, with permissions to add, delete, and query user information.
   - Issue Books: Handles book borrowing requests from users.
   - All Issued Books: Queries books that have been borrowed or returned.
-  5. User Features:
+  4. User Features:
   - Dashboard: Includes a chart for statistics on books borrowed/returned by month. Users can update their personal information. The "Total Borrowed Books" section shows the number of books borrowed.
   - My Borrowed Books: Queries information about books borrowed by the user.
   - Library: Displays books available in the library.
   - Music Player: Users can play, pause, and switch between songs in a pre-provided playlist from the publisher.
-  - SnakeBot: A chatbot using the Gemini 1.5 flash API to provide useful information about books users are interested in. It can translate and paraphrase responses in multi-language.
-  5. To logout account click the out icon in the bottom-left of the scence. To exit app click the exit icon in the right-top. 
+  5. SnakeBot: A chatbot using the Gemini 1.5 flash API to provide useful information about books users are interested in. It can translate and paraphrase responses in multi-language.
+  6. To logout account click the out icon in the bottom-left of the scence. To exit app click the exit icon in the right-top. 
 
 ## Demo
 
