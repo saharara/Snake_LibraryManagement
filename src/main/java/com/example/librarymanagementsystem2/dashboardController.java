@@ -564,8 +564,33 @@ public class dashboardController extends DashboardBaseController implements Init
         sortList.comparatorProperty().bind(availableBooks_tableView.comparatorProperty());
         availableBooks_tableView.setItems(sortList);
     }
+    public ObservableList<bookData> availableBooksListData() throws SQLException {
 
-    
+        ObservableList<bookData> listData = FXCollections.observableArrayList();
+        connect = database.connectDB();
+        connect.setAutoCommit(false);
+
+        try {
+            String sql = "SELECT * FROM book";
+            pst = connect.prepareStatement(sql);
+            rs = pst.executeQuery();
+
+            bookData bookD;
+
+            while(rs.next()) {
+                bookD = new bookData(rs.getString("isbn"), rs.getString("title")
+                        , rs.getString("author"), rs.getString("genre")
+                        , rs.getString("image"), rs.getDate("pub_date")
+                        , rs.getInt("quantity"), rs.getInt("remain"), rs.getInt("issued"));
+                listData.add(bookD);
+            }
+            connect.commit();
+        } catch (Exception e){
+            connect.rollback();
+            e.printStackTrace();
+        }
+        return listData;
+    }
     
     public void usersSearch() {
         FilteredList<User> filter = new FilteredList<>(usersList, e -> true);
