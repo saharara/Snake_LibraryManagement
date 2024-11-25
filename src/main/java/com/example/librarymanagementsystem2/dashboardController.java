@@ -821,7 +821,6 @@ public class dashboardController extends DashboardBaseController implements Init
                             pst.setString(1, uri);
                             pst.setString(2, user_msv.getText());
                             pst.executeUpdate();
-                            connect.commit();
                         }
 
                         // update ở bảng issue

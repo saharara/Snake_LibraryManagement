@@ -19,6 +19,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import javax.print.attribute.standard.Media;
 import javax.sound.sampled.*;
 import java.io.File;
 import java.io.IOException;
@@ -157,6 +158,9 @@ public class UserDashboardController extends DashboardBaseController implements 
 
     @FXML
     private ToggleButton audioStatus;
+
+    @FXML
+    private Button nextAudio;
 
     private Image image;
 
@@ -561,40 +565,81 @@ public class UserDashboardController extends DashboardBaseController implements 
         userChart.getData().addAll(series1, series2);
     }
 
-    public void setAudio() throws UnsupportedAudioFileException, IOException, LineUnavailableException {
-        // Load tài nguyên âm thanh
-        URL music = getClass().getResource("/com/example/librarymanagementsystem2/music/chrismas.wav");
-        if (music == null) {
-            throw new IllegalArgumentException("Music file not found!");
-        }
-        AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(music);
-        Clip clip = AudioSystem.getClip();
-        clip.open(audioInputStream);
-        clip.loop(Clip.LOOP_CONTINUOUSLY); // make it run infinity
-        clip.start();
+    private String[] musicList = {
+            "/com/example/librarymanagementsystem2/music/chrismas.wav",
+            "/com/example/librarymanagementsystem2/music/LikeADream.wav",
+            "/com/example/librarymanagementsystem2/music/GOTTheme.wav"
+    };
+    private int currentTrackIndex = 0; // To keep track of the current song
+    private Clip clip;
 
-        // Load hình ảnh
-        URL onURL = getClass().getResource("/com/example/librarymanagementsystem2/pictureStyle/audioOn.jpg");
-        URL offURL = getClass().getResource("/com/example/librarymanagementsystem2/pictureStyle/audioOff.png");
-        if (onURL == null || offURL == null) {
-            throw new IllegalArgumentException("One or more image files not found!");
-        }
+    public void setAudio() {
+        try {
+            playMusic(currentTrackIndex); // Start playing the first track
 
-        Image image1 = new Image(onURL.toExternalForm());
-        Image image2 = new Image(offURL.toExternalForm());
-        audioImage.setImage(image1); // Đặt hình ảnh mặc định
-
-        // Xử lý hành vi nút chuyển đổi âm thanh
-        audio.setSelected(false); // Đặt trạng thái mặc định
-        audio.setOnAction(event -> {
-            if (audio.isSelected()) {
-                audioImage.setImage(image2);
-                clip.stop(); // Tắt âm thanh
-            } else {
-                audioImage.setImage(image1);
-                clip.start(); // Phát lại âm thanh
+            // Load image resources
+            URL onURL = getClass().getResource("/com/example/librarymanagementsystem2/pictureStyle/audioOn.jpg");
+            URL offURL = getClass().getResource("/com/example/librarymanagementsystem2/pictureStyle/audioOff.png");
+            if (onURL == null || offURL == null) {
+                throw new IllegalArgumentException("One or more image files not found!");
             }
-        });
+
+            Image image1 = new Image(onURL.toExternalForm());
+            Image image2 = new Image(offURL.toExternalForm());
+            audioImage.setImage(image1); // Default image
+
+            // Toggle button behavior
+            audio.setSelected(false); // Default state
+            audio.setOnAction(event -> {
+                if (audio.isSelected()) {
+                    audioImage.setImage(image2);
+                    if (clip != null) clip.stop(); // Turn off audio
+                } else {
+                    audioImage.setImage(image1);
+                    if (clip != null){
+                        clip.loop(Clip.LOOP_CONTINUOUSLY); // Resume infinite play
+                        clip.start();
+                    }
+                }
+            });
+
+            // Handle "Next" button to switch songs
+            nextAudio.setOnAction(event -> {
+                if (clip != null) {
+                    clip.stop();
+                    clip.close();
+                }
+                currentTrackIndex = (currentTrackIndex + 1) % musicList.length; // Cycle through the playlist
+                playMusic(currentTrackIndex);
+            });
+
+            // Handle resource cleanup
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                if (clip != null) clip.close();
+            }));
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Optionally display an error to the user in the UI
+        }
+    }
+
+    private void playMusic(int trackIndex) {
+        try {
+            String trackPath = musicList[trackIndex];
+            URL musicURL = getClass().getResource(trackPath);
+            if (musicURL == null) {
+                throw new IllegalArgumentException("Music file not found: " + trackPath);
+            }
+
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(musicURL);
+            clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+            clip.loop(Clip.LOOP_CONTINUOUSLY); // Infinite loop
+            clip.start();
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            e.printStackTrace();
+            // Optionally handle errors like showing a message in the UI
+        }
     }
 
     public void initialize(URL url, ResourceBundle resourceBundle) {

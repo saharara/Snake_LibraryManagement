@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import java.net.URL;
 
 import java.io.IOException;
 
@@ -14,8 +15,11 @@ public class HelloApplication extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("Start.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         
-        stage.setTitle("Library Management System");
-        //stage.getIcons().add(new Image(HelloApplication.class.getResourceAsStream("src/main/resources/com/example/librarymanagementsystem2/pictureStyle/logo.png")));
+        stage.setTitle("Snake Library Management System");
+
+        Image image = new Image(getClass().getResourceAsStream("/com/example/librarymanagementsystem2/pictureStyle/logo.png"));
+        stage.getIcons().add(image);
+
         stage.setMinHeight(450); // kích thước tôi thiểu
         stage.setMinWidth(615);
 
