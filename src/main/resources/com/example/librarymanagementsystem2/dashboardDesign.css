@@ -22,10 +22,6 @@
 .minimize:hover{
     -fx-background-color: #ddd;
 }
-.nav-form{
-    -fx-background-image: url('pictureStyle/dashboard.png');
-    -fx-background-repeat: no-repeat;
-}
 .nav-btn{
     -fx-background-color: transparent;
     -fx-cursor: hand;
@@ -62,13 +58,13 @@
     -fx-border-width: 0.4px;
 }
 .text-field1:focused{
-    -fx-border-color: linear-gradient(to bottom right, #2e418f, #527ed2);
+    -fx-border-color: linear-gradient(to bottom right, #71d7e1, #0198b3);
     -fx-background-color: white;
     -fx-border-width: 1px;
 }
 .search{
     -fx-background-color: transparent;
-    -fx-border-color: linear-gradient(to bottom right, #2e418f, #527ed2);
+    -fx-border-color: linear-gradient(to bottom right, #71d7e1, #0198b3);
     -fx-border-radius: 4px;
     -fx-border-width: 0.8px;
     -fx-padding: 0px 0px 0px 28px;
@@ -78,7 +74,7 @@
 }
 .table-view{
     -fx-background-color: transparent;
-    -fx-border-color: linear-gradient(to bottom right, #7fa3e7, #546ad0);
+    -fx-border-color: linear-gradient(to bottom right, #71d7e1, #0198b3);
     -fx-border-radius: 8px;
     -fx-border-width: 2px;
     -fx-padding: 0px;
@@ -87,7 +83,7 @@
     -fx-alignment: CENTER;
 }
 .table-view .column-header-background{
-    -fx-background-color: linear-gradient(to bottom right, #7fa3e7, #546ad0);
+    -fx-background-color: linear-gradient(to bottom right, #71d7e1, #0198b3);
     -fx-background-radius: 8px 8px 0px 0px;
     -fx-background-insets: 0 0 0 0;
 }
@@ -102,7 +98,7 @@
 }
 
 .issue-btn{
-    -fx-background-color: linear-gradient(to bottom right, #2e418f, #394b9a);
+    -fx-background-color: linear-gradient(to bottom right, #003e49, #5aacb5);
     -fx-background-radius: 5px; // độ tròn
     -fx-cursor: hand;   // thay đổi con trỏ chuột
     -fx-text-fill: white; // màu chữ
@@ -110,5 +106,12 @@
 }
 
 .issue-btn:hover{
-    -fx-background-color: linear-gradient(to bottom right, #6178d5, #7288de);
+    -fx-background-color: linear-gradient(to bottom right, #71d7e1, #0198b3);
+}
+.nav-form1{
+    -fx-background-color: linear-gradient(to bottom right, #71d7e1, #0198b3);
+}
+.snow-container {
+    -fx-background-image: url('pictureStyle/dashboard.png');
+    -fx-background-repeat: no-repeat;
 }

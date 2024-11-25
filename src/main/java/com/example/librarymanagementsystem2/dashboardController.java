@@ -15,10 +15,14 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.OptionalDataException;
 import java.net.URL;
 import java.security.cert.Extension;
@@ -111,6 +115,8 @@ public class dashboardController implements Initializable {
     @FXML
     private Button issue_btn;
 
+    @FXML
+    private Button chat_bot;
     @FXML
     private Button listOfissue_btn;
     @FXML
@@ -228,6 +234,8 @@ public class dashboardController implements Initializable {
     private TableColumn<ListIssue, String> listIssue_col_title;
     private int idIssue;
 
+    @FXML
+    private AnchorPane snowContainer;
 
     private Connection connect;
     private Connection connect1;
@@ -534,37 +542,42 @@ public class dashboardController implements Initializable {
     }
 
     public void availableBooksSearch() {
+        String searchQuery = availableBooks_search.getText().toLowerCase();
 
-        FilteredList<bookData> filter = new FilteredList<>(availableBooksList, e -> true);
+        // Get books from API
+        List<bookData> apiResults = bookData.searchBooks(searchQuery);
 
+        // Combine API results with existing database books
+        ObservableList<bookData> combinedBooks = FXCollections.observableArrayList();
+        combinedBooks.addAll(availableBooksList); // Add database books
+        combinedBooks.addAll(apiResults);         // Add API results
+
+        // Create filtered list
+        FilteredList<bookData> filter = new FilteredList<>(combinedBooks, e -> true);
+
+        // Add listener for search text changes
         availableBooks_search.textProperty().addListener((observable, oldValue, newValue) -> {
-
             filter.setPredicate(predicateBookData -> {
-
+                // If search text is empty, show all books
                 if (newValue == null || newValue.isEmpty()) {
                     return true;
                 }
 
                 String searchKey = newValue.toLowerCase();
 
-                if (predicateBookData.getIsbn().toLowerCase().contains(searchKey)) {
-                    return true;
-                } else if (predicateBookData.getTitle().toLowerCase().contains(searchKey)) {
-                    return true;
-                } else if (predicateBookData.getAuthor().toLowerCase().contains(searchKey)) {
-                    return true;
-                } else if (predicateBookData.getGenre().toLowerCase().contains(searchKey)) {
-                    return true;
-                }
-                return false;
+                // Search in all fields
+                return predicateBookData.getIsbn().toLowerCase().contains(searchKey) ||
+                        predicateBookData.getTitle().toLowerCase().contains(searchKey) ||
+                        predicateBookData.getAuthor().toLowerCase().contains(searchKey) ||
+                        predicateBookData.getGenre().toLowerCase().contains(searchKey);
             });
         });
 
-        SortedList<bookData> sortList = new SortedList(filter);
+        // Create and bind sorted list
+        SortedList<bookData> sortList = new SortedList<>(filter);
         sortList.comparatorProperty().bind(availableBooks_tableView.comparatorProperty());
         availableBooks_tableView.setItems(sortList);
     }
-
     public ObservableList<bookData> availableBooksListData() throws SQLException {
 
         ObservableList<bookData> listData = FXCollections.observableArrayList();
@@ -612,7 +625,7 @@ public class dashboardController implements Initializable {
         bookData bookD = availableBooks_tableView.getSelectionModel().getSelectedItem();
         int num = availableBooks_tableView.getSelectionModel().getSelectedIndex();
 
-        if(num < 0) {
+        if (num < 0) {
             return;
         }
 
@@ -620,16 +633,18 @@ public class dashboardController implements Initializable {
         availableBooks_title.setText(bookD.getTitle());
         availableBooks_author.setText(bookD.getAuthor());
         availableBooks_genre.setText(bookD.getGenre());
-        availableBooks_date.setValue(LocalDate.parse(String.valueOf(bookD.getDate())));
+        try {
+            availableBooks_date.setValue(LocalDate.parse(String.valueOf(bookD.getDate())));
+        } catch (Exception e) {
+            System.out.println("loi get ngay");
+        }
         availableBooks_quantity.setText(String.valueOf(bookD.getQuantity()));
 
         getData.path = bookD.getImage();
 
-        String uri = "file:" + bookD.getImage();
-
-        image = new Image(uri, 112, 137, false, true);
+        String imageUrl = bookD.getImage();
+        Image image = new Image(imageUrl, 112, 137, false, true);
         availableBooks_imageView.setImage(image);
-
     }
 
     public ObservableList<User> usersListData() throws SQLException {
@@ -1421,7 +1436,7 @@ public class dashboardController implements Initializable {
             listIssue_form.setVisible(false);
             dashboard_form.setVisible(true);
 
-            dashboard_btn.setStyle("-fx-background-color: linear-gradient(to top right, #4f63b7, #709df3)");
+            dashboard_btn.setStyle("-fx-background-color: linear-gradient(to top right, #4c96a1, #bff4ff)");
             bookManagement_btn.setStyle("-fx-background-color: transparent");
             userManagement_btn.setStyle("-fx-background-color: transparent");
             issue_btn.setStyle("-fx-background-color: transparent");
@@ -1433,7 +1448,7 @@ public class dashboardController implements Initializable {
             listIssue_form.setVisible(false);
             availableBooks_form.setVisible(true);
 
-            bookManagement_btn.setStyle("-fx-background-color: linear-gradient(to top right, #4f63b7, #709df3)");
+            bookManagement_btn.setStyle("-fx-background-color: linear-gradient(to top right, #4c96a1, #bff4ff)");
             dashboard_btn.setStyle("-fx-background-color: transparent");
             userManagement_btn.setStyle("-fx-background-color: transparent");
             issue_btn.setStyle("-fx-background-color: transparent");
@@ -1449,7 +1464,7 @@ public class dashboardController implements Initializable {
             listIssue_form.setVisible(false);
             user_form.setVisible(true);
 
-            userManagement_btn.setStyle("-fx-background-color: linear-gradient(to top right, #4f63b7, #709df3)");
+            userManagement_btn.setStyle("-fx-background-color: linear-gradient(to top right, #4c96a1, #bff4ff)");
             bookManagement_btn.setStyle("-fx-background-color: transparent");
             dashboard_btn.setStyle("-fx-background-color: transparent");
             issue_btn.setStyle("-fx-background-color: transparent");
@@ -1469,7 +1484,7 @@ public class dashboardController implements Initializable {
             listOfissue_btn.setStyle("-fx-background-color: transparent");
             bookManagement_btn.setStyle("-fx-background-color: transparent");
             userManagement_btn.setStyle("-fx-background-color: transparent");
-            issue_btn.setStyle("-fx-background-color: linear-gradient(to top right, #4f63b7, #709df3)");
+            issue_btn.setStyle("-fx-background-color: linear-gradient(to top right, #4c96a1, #bff4ff)");
         } else if (event.getSource() == listOfissue_btn) {
             dashboard_form.setVisible(false);
             availableBooks_form.setVisible(false);
@@ -1481,7 +1496,7 @@ public class dashboardController implements Initializable {
             bookManagement_btn.setStyle("-fx-background-color: transparent");
             userManagement_btn.setStyle("-fx-background-color: transparent");
             issue_btn.setStyle("-fx-background-color: transparent");
-            listOfissue_btn.setStyle("-fx-background-color: linear-gradient(to top right, #4f63b7, #709df3)");
+            listOfissue_btn.setStyle("-fx-background-color: linear-gradient(to top right, #4c96a1, #bff4ff)");
 
             issuesShowListData();
             listIssueSearch();
@@ -1530,5 +1545,24 @@ public class dashboardController implements Initializable {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+    public void openSnakeBotWindow() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("ChatBot.fxml"));
+            StackPane snakeBotRoot = loader.load();
+            Stage newStage = new Stage();
+            newStage.setTitle("SnakeBot");
+            Scene newScene = new Scene(snakeBotRoot);
+            newStage.setScene(newScene);
+            newStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    public void initialize() {
+        SnowEffect snowEffect = new SnowEffect(snowContainer, 5);
+        snowEffect.startSnowfall();
     }
 }
