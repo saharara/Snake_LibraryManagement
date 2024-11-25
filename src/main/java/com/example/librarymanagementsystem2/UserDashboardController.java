@@ -242,41 +242,6 @@ public class UserDashboardController extends DashboardBaseController implements 
     }
 
 
-    public void deleteUser() {
-        connect = database.connectDB();
-        try {
-            String sqlcheck = "SELECT COUNT(*) FROM issue WHERE msv = ?" + "AND returnDate is null";
-            pst = connect.prepareStatement(sqlcheck);
-            pst.setString(1, dashboard_ID.getText());
-            rs = pst.executeQuery();
-
-            if (rs.next() && rs.getInt(1) > 0) {
-                showAlert(Alert.AlertType.ERROR, "Error Message", "Cannot delete an account that is currently borrowing books.");
-            } else {
-                Optional<ButtonType> option = showChooseAlter(Alert.AlertType.INFORMATION, "Information Message", "Are you sure you want to delete your account?");
-
-                if (option.get() == ButtonType.OK) {
-                    String sqlDelete = "DELETE FROM user WHERE msv = ?;";
-                    pst = connect.prepareStatement(sqlDelete);
-                    pst.setString(1, dashboard_ID.getText());
-                    pst.executeUpdate();
-
-                    showAlert(Alert.AlertType.INFORMATION, "Information Message", "Successfully Deleted!");
-
-                    logout.getScene().getWindow().hide();
-                    Parent root = FXMLLoader.load(getClass().getResource("userLogin.fxml"));
-                    Stage stage = new Stage();
-                    Scene scene = new Scene(root);
-                    stage.setScene(scene);
-                    stage.show();
-                }
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     public ObservableList<ListIssue> borrowedListData() throws SQLException {
         ObservableList<ListIssue> list = FXCollections.observableArrayList();
