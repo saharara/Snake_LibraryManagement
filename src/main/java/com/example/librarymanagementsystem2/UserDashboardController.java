@@ -242,7 +242,6 @@ public class UserDashboardController extends DashboardBaseController implements 
         }
     }
 
-
     public void deleteUser() {
         connect = database.connectDB();
         try {
@@ -583,7 +582,8 @@ public class UserDashboardController extends DashboardBaseController implements 
     private String[] musicList = {
             "/com/example/librarymanagementsystem2/music/chrismas.wav",
             "/com/example/librarymanagementsystem2/music/LikeADream.wav",
-            "/com/example/librarymanagementsystem2/music/GOTTheme.wav"
+            "/com/example/librarymanagementsystem2/music/GOTTheme.wav",
+            "/com/example/librarymanagementsystem2/music/digiuatroirucro.wav"
     };
     private int currentTrackIndex = 0; // To keep track of the current song
     private Clip clip;
