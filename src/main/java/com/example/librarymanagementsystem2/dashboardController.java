@@ -888,6 +888,84 @@ public class dashboardController extends DashboardBaseController implements Init
             }
         }
     }
+
+    public void usersDelete() {
+        if (user_msv.getText().isEmpty()
+                || user_name.getText().isEmpty()
+                || user_phoneNumber.getText().isEmpty()
+                || user_email.getText().isEmpty()) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error Message");
+            alert.setHeaderText(null);
+            alert.setContentText("Please fill all blank fields");
+            alert.showAndWait();
+        } else {
+            //
+            connect = database.connectDB();
+            try {
+                String sql = "SELECT msv FROM user WHERE msv = ?";
+                pst = connect.prepareStatement(sql);
+                pst.setString(1, user_msv.getText());
+                rs = pst.executeQuery();
+
+                // nếu tìm thấy msv trong bảng users
+                if (rs.next()) {
+                    // check trong bảng issue nếu không có mới xóa được
+                    String sql1 = "SELECT COUNT(*) FROM issue WHERE msv = ?" + "AND returnDate is null";
+                    pst = connect.prepareStatement(sql1);
+                    pst.setString(1, user_msv.getText());
+                    rs = pst.executeQuery();
+
+                    // nếu có ở bảng issue thì không xóa được
+                    if (rs.next() && rs.getInt(1) > 0) {
+                        showAlert(Alert.AlertType.ERROR, "Error Message", "This student is borrowing books");
+                        //  xóa
+                    } else {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Information Message");
+                        alert.setHeaderText(null);
+                        alert.setContentText("Are you sure you want to DELETE student with student code: "+ user_msv.getText() +"?");
+                        Optional<ButtonType> option = alert.showAndWait();
+
+                        if (option.get().equals(ButtonType.OK)) {
+                            String sqlDelete = "DELETE FROM user WHERE msv = ?;";
+                            pst = connect.prepareStatement(sqlDelete);
+                            pst.setString(1, user_msv.getText());
+                            pst.executeUpdate();
+
+                            alert = new Alert(Alert.AlertType.INFORMATION);
+                            alert.setTitle("Information Message");
+                            alert.setHeaderText(null);
+                            alert.setContentText("Successfully Deleted!");
+                            alert.showAndWait();
+
+                            usersShowListData();
+                            usersClear();
+                        }
+                    }
+
+                } else {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Not found Student code");
+                    alert.showAndWait();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void usersClear() {
+        user_msv.setText("");
+        user_name.setText("");
+        user_phoneNumber.setText("");
+        user_email.setText("");
+
+        getData.path = "";
+        user_imageView.setImage(null);
+    }
     
     public void usersSearch() {
         FilteredList<User> filter = new FilteredList<>(usersList, e -> true);
