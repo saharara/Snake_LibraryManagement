@@ -1429,7 +1429,7 @@ public class dashboardController implements Initializable {
             listIssue_form.setVisible(false);
             dashboard_form.setVisible(true);
 
-            dashboard_btn.setStyle("-fx-background-color: linear-gradient(to top right, #4f63b7, #709df3)");
+            dashboard_btn.setStyle("-fx-background-color: linear-gradient(to top right, #4c96a1, #bff4ff)");
             bookManagement_btn.setStyle("-fx-background-color: transparent");
             userManagement_btn.setStyle("-fx-background-color: transparent");
             issue_btn.setStyle("-fx-background-color: transparent");
@@ -1441,7 +1441,7 @@ public class dashboardController implements Initializable {
             listIssue_form.setVisible(false);
             availableBooks_form.setVisible(true);
 
-            bookManagement_btn.setStyle("-fx-background-color: linear-gradient(to top right, #4f63b7, #709df3)");
+            bookManagement_btn.setStyle("-fx-background-color: linear-gradient(to top right, #4c96a1, #bff4ff)");
             dashboard_btn.setStyle("-fx-background-color: transparent");
             userManagement_btn.setStyle("-fx-background-color: transparent");
             issue_btn.setStyle("-fx-background-color: transparent");
@@ -1457,7 +1457,7 @@ public class dashboardController implements Initializable {
             listIssue_form.setVisible(false);
             user_form.setVisible(true);
 
-            userManagement_btn.setStyle("-fx-background-color: linear-gradient(to top right, #4f63b7, #709df3)");
+            userManagement_btn.setStyle("-fx-background-color: linear-gradient(to top right, #4c96a1, #bff4ff)");
             bookManagement_btn.setStyle("-fx-background-color: transparent");
             dashboard_btn.setStyle("-fx-background-color: transparent");
             issue_btn.setStyle("-fx-background-color: transparent");
@@ -1477,7 +1477,7 @@ public class dashboardController implements Initializable {
             listOfissue_btn.setStyle("-fx-background-color: transparent");
             bookManagement_btn.setStyle("-fx-background-color: transparent");
             userManagement_btn.setStyle("-fx-background-color: transparent");
-            issue_btn.setStyle("-fx-background-color: linear-gradient(to top right, #4f63b7, #709df3)");
+            issue_btn.setStyle("-fx-background-color: linear-gradient(to top right, #4c96a1, #bff4ff)");
         } else if (event.getSource() == listOfissue_btn) {
             dashboard_form.setVisible(false);
             availableBooks_form.setVisible(false);
@@ -1489,7 +1489,7 @@ public class dashboardController implements Initializable {
             bookManagement_btn.setStyle("-fx-background-color: transparent");
             userManagement_btn.setStyle("-fx-background-color: transparent");
             issue_btn.setStyle("-fx-background-color: transparent");
-            listOfissue_btn.setStyle("-fx-background-color: linear-gradient(to top right, #4f63b7, #709df3)");
+            listOfissue_btn.setStyle("-fx-background-color: linear-gradient(to top right, #4c96a1, #bff4ff)");
 
             issuesShowListData();
             listIssueSearch();
@@ -1555,7 +1555,7 @@ public class dashboardController implements Initializable {
 
     @FXML
     public void initialize() {
-        SnowEffect snowEffect = new SnowEffect(snowContainer, 10);
+        SnowEffect snowEffect = new SnowEffect(snowContainer, 5);
         snowEffect.startSnowfall();
     }
 }
