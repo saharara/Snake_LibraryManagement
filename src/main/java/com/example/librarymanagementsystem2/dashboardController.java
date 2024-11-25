@@ -15,7 +15,9 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -232,6 +234,8 @@ public class dashboardController implements Initializable {
     private TableColumn<ListIssue, String> listIssue_col_title;
     private int idIssue;
 
+    @FXML
+    private AnchorPane snowContainer;
 
     private Connection connect;
     private Connection connect1;
@@ -539,14 +543,41 @@ public class dashboardController implements Initializable {
 
     public void availableBooksSearch() {
         String searchQuery = availableBooks_search.getText().toLowerCase();
-        List<bookData> searchResults = bookData.searchBooks(searchQuery);
 
-        FilteredList<bookData> filter = new FilteredList<>(FXCollections.observableArrayList(searchResults), e -> true);
+        // Get books from API
+        List<bookData> apiResults = bookData.searchBooks(searchQuery);
+
+        // Combine API results with existing database books
+        ObservableList<bookData> combinedBooks = FXCollections.observableArrayList();
+        combinedBooks.addAll(availableBooksList); // Add database books
+        combinedBooks.addAll(apiResults);         // Add API results
+
+        // Create filtered list
+        FilteredList<bookData> filter = new FilteredList<>(combinedBooks, e -> true);
+
+        // Add listener for search text changes
+        availableBooks_search.textProperty().addListener((observable, oldValue, newValue) -> {
+            filter.setPredicate(predicateBookData -> {
+                // If search text is empty, show all books
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+
+                String searchKey = newValue.toLowerCase();
+
+                // Search in all fields
+                return predicateBookData.getIsbn().toLowerCase().contains(searchKey) ||
+                        predicateBookData.getTitle().toLowerCase().contains(searchKey) ||
+                        predicateBookData.getAuthor().toLowerCase().contains(searchKey) ||
+                        predicateBookData.getGenre().toLowerCase().contains(searchKey);
+            });
+        });
+
+        // Create and bind sorted list
         SortedList<bookData> sortList = new SortedList<>(filter);
         sortList.comparatorProperty().bind(availableBooks_tableView.comparatorProperty());
         availableBooks_tableView.setItems(sortList);
     }
-
     public ObservableList<bookData> availableBooksListData() throws SQLException {
 
         ObservableList<bookData> listData = FXCollections.observableArrayList();
@@ -1520,5 +1551,11 @@ public class dashboardController implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @FXML
+    public void initialize() {
+        SnowEffect snowEffect = new SnowEffect(snowContainer, 10);
+        snowEffect.startSnowfall();
     }
 }
