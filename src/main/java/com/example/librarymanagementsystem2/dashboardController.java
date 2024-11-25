@@ -500,7 +500,17 @@ public class dashboardController extends DashboardBaseController implements Init
         }
     }
 
+    public void availableBooksClear() {
+        availableBooks_ISBN.setText("");
+        availableBooks_title.setText("");
+        availableBooks_author.setText("");
+        availableBooks_genre.setText("");
+        availableBooks_date.setValue(null);
+        availableBooks_quantity.setText("");
 
+        getData.path = "";
+        availableBooks_imageView.setImage(null);
+    }
 
     public void usersSearch() {
         FilteredList<User> filter = new FilteredList<>(usersList, e -> true);
