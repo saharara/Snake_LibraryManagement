@@ -17,9 +17,6 @@ public class HelloApplication extends Application {
         
         stage.setTitle("Snake Library Management System");
 
-        Image image = new Image(getClass().getResourceAsStream("/com/example/librarymanagementsystem2/pictureStyle/logo.png"));
-        stage.getIcons().add(image);
-
         stage.setMinHeight(450); // kích thước tôi thiểu
         stage.setMinWidth(615);
 

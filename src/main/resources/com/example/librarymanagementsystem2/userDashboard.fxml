@@ -51,61 +51,6 @@
                             </children>
                         </AnchorPane>
                     </top>
-                    <left>
-                        <AnchorPane prefHeight="555.0" prefWidth="199.0" styleClass="nav-form" stylesheets="@dashboardDesign.css" BorderPane.alignment="CENTER">
-                            <children>
-                        <Button fx:id="nextAudio" layoutX="61.0" layoutY="474.0" mnemonicParsing="false" onAction="#setAudio" prefHeight="40.0" prefWidth="30.0" styleClass="audio-toggle" stylesheets="@dashboardDesign.css">
-                           <graphic>
-                              <FontAwesomeIcon glyphName="FORWARD" />
-                           </graphic>
-                        </Button>
-                                <Label fx:id="username" alignment="CENTER" layoutX="16.0" layoutY="155.0" prefHeight="60.0" prefWidth="163.0" text="User" textAlignment="CENTER" textFill="#006370">
-                                    <font>
-                                        <Font name="Arial Bold" size="20.0" />
-                                    </font>
-                                </Label>
-                                <Line endX="91.99998474121094" layoutX="97.0" layoutY="222.0" startX="-91.16666412353516" stroke="WHITE" />
-                                <Button fx:id="dashboard_btn" alignment="BASELINE_LEFT" layoutX="8.0" layoutY="243.0" mnemonicParsing="false" onAction="#switchForm" prefHeight="40.0" prefWidth="180.0" styleClass="nav-btn" stylesheets="@dashboardDesign.css" text="Dashboard" textFill="#006370">
-                                    <font>
-                                        <Font name="Arial" size="14.0" />
-                                    </font>
-                                    <graphic>
-                                        <FontAwesomeIcon fill="#006370" glyphName="DASHBOARD" size="1.5em" />
-                                    </graphic>
-                                </Button>
-                                <Button fx:id="myBorrowedBooks_btn" alignment="BASELINE_LEFT" layoutX="8.0" layoutY="283.0" mnemonicParsing="false" onAction="#switchForm" prefHeight="40.0" prefWidth="180.0" styleClass="nav-btn" stylesheets="@dashboardDesign.css" text="My Borrowed Books" textFill="#006370">
-                                    <font>
-                                        <Font name="Arial" size="14.0" />
-                                    </font>
-                           <graphic>
-                                        <FontAwesomeIcon fill="#006370" glyphName="DOWNLOAD" size="1.5em" text="" />
-                           </graphic>
-                                </Button>
-                                <Button fx:id="logout" layoutX="7.0" layoutY="518.0" mnemonicParsing="false" onAction="#logout" stylesheets="@dashboardDesign.css">
-                                    <graphic>
-                                        <FontAwesomeIcon fill="WHITE" glyphName="SIGN_OUT" size="2em" />
-                                    </graphic>
-                                    <styleClass>
-                                        <String fx:value="sign-out" />
-                                        <String fx:value="shadow" />
-                                    </styleClass>
-                                </Button>
-                                <Button fx:id="library_btn" alignment="BASELINE_LEFT" layoutX="8.0" layoutY="323.0" mnemonicParsing="false" onAction="#switchForm" prefHeight="40.0" prefWidth="180.0" styleClass="nav-btn" stylesheets="@dashboardDesign.css" text="Library" textFill="#006370">
-                                    <font>
-                                        <Font name="Arial" size="14.0" />
-                                    </font>
-                           <graphic>
-                                        <FontAwesomeIcon fill="#006370" glyphName="DOWNLOAD" size="1.5em" text="" />
-                           </graphic>
-                                </Button>
-                        <ToggleButton fx:id="audio" layoutX="14.0" layoutY="474.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="30.0" styleClass="audio-toggle" stylesheets="@dashboardDesign.css">
-                           <graphic>
-                              <ImageView fx:id="audioImage" fitHeight="35.0" fitWidth="31.0" pickOnBounds="true" preserveRatio="true" />
-                           </graphic>
-                        </ToggleButton>
-                            </children>
-                        </AnchorPane>
-                    </left>
                     <center>
                         <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="white-bg" stylesheets="@dashboardDesign.css" BorderPane.alignment="CENTER">
                             <children>
@@ -276,6 +221,69 @@
                             </children>
                         </AnchorPane>
                     </center>
+               <left>
+                        <AnchorPane prefHeight="555.0" prefWidth="199.0" styleClass="nav-form" stylesheets="@dashboardDesign.css" BorderPane.alignment="CENTER">
+                            <children>
+                        <Button fx:id="nextAudio" layoutX="121.0" layoutY="519.0" mnemonicParsing="false" onAction="#setAudio" prefHeight="30.0" prefWidth="31.0" stylesheets="@dashboardDesign.css">
+                           <graphic>
+                              <FontAwesomeIcon fill="WHITE" glyphName="FORWARD" size="1.5em" text="" />
+                           </graphic>
+                           <styleClass>
+                              <String fx:value="audio-toggle" />
+                              <String fx:value="shadow" />
+                           </styleClass>
+                        </Button>
+                                <Label fx:id="username" alignment="CENTER" layoutX="16.0" layoutY="155.0" prefHeight="60.0" prefWidth="163.0" text="User" textAlignment="CENTER" textFill="#006370">
+                                    <font>
+                                        <Font name="Arial Bold" size="20.0" />
+                                    </font>
+                                </Label>
+                                <Line endX="91.99998474121094" layoutX="97.0" layoutY="222.0" startX="-91.16666412353516" stroke="WHITE" />
+                                <Button fx:id="dashboard_btn" alignment="BASELINE_LEFT" layoutX="8.0" layoutY="243.0" mnemonicParsing="false" onAction="#switchForm" prefHeight="40.0" prefWidth="180.0" styleClass="nav-btn" stylesheets="@dashboardDesign.css" text="Dashboard" textFill="#006370">
+                                    <font>
+                                        <Font name="Arial" size="14.0" />
+                                    </font>
+                                    <graphic>
+                                        <FontAwesomeIcon fill="#006370" glyphName="DASHBOARD" size="1.5em" />
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="myBorrowedBooks_btn" alignment="BASELINE_LEFT" layoutX="8.0" layoutY="283.0" mnemonicParsing="false" onAction="#switchForm" prefHeight="40.0" prefWidth="180.0" styleClass="nav-btn" stylesheets="@dashboardDesign.css" text="My Borrowed Books" textFill="#006370">
+                                    <font>
+                                        <Font name="Arial" size="14.0" />
+                                    </font>
+                           <graphic>
+                                        <FontAwesomeIcon fill="#006370" glyphName="DOWNLOAD" size="1.5em" text="" />
+                           </graphic>
+                                </Button>
+                                <Button fx:id="logout" layoutX="7.0" layoutY="518.0" mnemonicParsing="false" onAction="#logout" stylesheets="@dashboardDesign.css">
+                                    <graphic>
+                                        <FontAwesomeIcon fill="WHITE" glyphName="SIGN_OUT" size="2em" />
+                                    </graphic>
+                                    <styleClass>
+                                        <String fx:value="sign-out" />
+                                        <String fx:value="shadow" />
+                                    </styleClass>
+                                </Button>
+                                <Button fx:id="library_btn" alignment="BASELINE_LEFT" layoutX="8.0" layoutY="323.0" mnemonicParsing="false" onAction="#switchForm" prefHeight="40.0" prefWidth="180.0" styleClass="nav-btn" stylesheets="@dashboardDesign.css" text="Library" textFill="#006370">
+                                    <font>
+                                        <Font name="Arial" size="14.0" />
+                                    </font>
+                           <graphic>
+                                        <FontAwesomeIcon fill="#006370" glyphName="DOWNLOAD" size="1.5em" text="" />
+                           </graphic>
+                                </Button>
+                        <ToggleButton fx:id="audio" layoutX="59.0" layoutY="513.0" mnemonicParsing="false" prefHeight="42.0" prefWidth="39.0" stylesheets="@dashboardDesign.css">
+                           <graphic>
+                              <ImageView fx:id="audioImage" fitHeight="26.0" fitWidth="30.4" pickOnBounds="true" preserveRatio="true" />
+                           </graphic>
+                           <styleClass>
+                              <String fx:value="audio-toggle" />
+                              <String fx:value="shadow" />
+                           </styleClass>
+                        </ToggleButton>
+                            </children>
+                        </AnchorPane>
+               </left>
                 </BorderPane>
             </children>
         </AnchorPane>

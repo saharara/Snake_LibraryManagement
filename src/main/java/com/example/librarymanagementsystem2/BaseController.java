@@ -9,6 +9,9 @@ import javafx.stage.Stage;
 import java.util.Optional;
 
 public class BaseController {
+    protected Stage stage;
+    protected Scene scene;
+    protected Parent root;
 
     public void showAlert(Alert.AlertType type, String title, String message) {
         Alert alert = new Alert(type);

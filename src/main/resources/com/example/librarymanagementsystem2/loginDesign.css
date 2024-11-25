@@ -1,9 +1,14 @@
 .gradient {
-    -fx-background-image: url('pictureStyle/login.png');
+    -fx-background-image: url('pictureStyle/Userlogin.png');
     -fx-background-position: left;
     -fx-background-repeat: no-repeat;
 }
 
+.gradientAdmin {
+    -fx-background-image: url('pictureStyle/adminLogin.png');
+    -fx-background-position: left;
+    -fx-background-repeat: no-repeat;
+}
 .white-form{
     -fx-background-color: transparent;
 }

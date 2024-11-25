@@ -578,8 +578,8 @@ public class UserDashboardController extends DashboardBaseController implements 
             playMusic(currentTrackIndex); // Start playing the first track
 
             // Load image resources
-            URL onURL = getClass().getResource("/com/example/librarymanagementsystem2/pictureStyle/audioOn.jpg");
-            URL offURL = getClass().getResource("/com/example/librarymanagementsystem2/pictureStyle/audioOff.png");
+            URL onURL = getClass().getResource("/com/example/librarymanagementsystem2/pictureStyle/AudioOn.png");
+            URL offURL = getClass().getResource("/com/example/librarymanagementsystem2/pictureStyle/AudioOff1.png");
             if (onURL == null || offURL == null) {
                 throw new IllegalArgumentException("One or more image files not found!");
             }

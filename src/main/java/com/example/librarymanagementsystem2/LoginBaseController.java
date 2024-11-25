@@ -105,9 +105,9 @@ public class LoginBaseController extends BaseController {
     @FXML
     protected TextField su_id;
 
-    protected Stage stage;
+/*    protected Stage stage;
     protected Scene scene;
-    protected Parent root;
+    protected Parent root;*/
     protected Connection connect;
     protected PreparedStatement pst;
     protected ResultSet rs;

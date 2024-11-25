@@ -1521,7 +1521,6 @@ public class dashboardController extends DashboardBaseController implements Init
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
     }
 
     public int getBorrowData(int m) throws SQLException {
