@@ -193,6 +193,7 @@ public class UserDashboardController extends DashboardBaseController implements 
         if (dashboard_name.getText().isEmpty() || dashboard_phoneNumber.getText().isEmpty()
                 || dashBoard_email.getText().isEmpty() || dashboard_password.getText().isEmpty()
                 || dashboard_question.getSelectionModel().getSelectedItem() == null || dashboard_answer.getText().isEmpty()) {
+
             showAlert(Alert.AlertType.ERROR, "Error Message", "Please fill all the empty fields");
         } else {
             connect = database.connectDB();

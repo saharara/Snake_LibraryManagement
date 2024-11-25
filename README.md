@@ -16,7 +16,7 @@ The application is design for librarians to manage their library. The applicatio
   5. The application uses SQL database to store data
 
 ## UML Diagram
-
+![img.png](img.png)
 ## Installation 
   1. Clone the project from the repository.
   2. Open the project in the IDE.
