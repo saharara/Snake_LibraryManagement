@@ -1,7 +1,12 @@
 package com.example.librarymanagementsystem2;
 
 import javafx.event.ActionEvent;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -36,4 +41,17 @@ public class DashboardBaseController extends BaseController {
     public void close(){}
     public void minimize(){}
     public void logout(){}
+    public void openSnakeBotWindow() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("ChatBot.fxml"));
+            StackPane snakeBotRoot = loader.load();
+            Stage newStage = new Stage();
+            newStage.setTitle("SnakeBot");
+            Scene newScene = new Scene(snakeBotRoot);
+            newStage.setScene(newScene);
+            newStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

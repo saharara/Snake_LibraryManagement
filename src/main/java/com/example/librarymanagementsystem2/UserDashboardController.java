@@ -420,7 +420,7 @@ public class UserDashboardController extends DashboardBaseController implements 
             myborrow_form.setVisible(false);
             library_form.setVisible(false);
 
-            dashboard_btn.setStyle("-fx-background-color: linear-gradient(to top right, #71d7e1, #0198b3)");
+            dashboard_btn.setStyle("-fx-background-color: linear-gradient(to top right, #4c96a1, #bff4ff)");
             myBorrowedBooks_btn.setStyle("-fx-background-color: transparent");
             library_btn.setStyle("-fx-background-color: transparent");
 
@@ -431,7 +431,7 @@ public class UserDashboardController extends DashboardBaseController implements 
             library_form.setVisible(false);
 
             dashboard_btn.setStyle("-fx-background-color: transparent");
-            myBorrowedBooks_btn.setStyle("-fx-background-color: linear-gradient(to top right, #71d7e1, #0198b3)");
+            myBorrowedBooks_btn.setStyle("-fx-background-color: linear-gradient(to top right, #4c96a1, #bff4ff)");
             library_btn.setStyle("-fx-background-color: transparent");
 
             borrowedShowList();
@@ -442,7 +442,7 @@ public class UserDashboardController extends DashboardBaseController implements 
 
             dashboard_btn.setStyle("-fx-background-color: transparent");
             myBorrowedBooks_btn.setStyle("-fx-background-color: transparent");
-            library_btn.setStyle("-fx-background-color: linear-gradient(to top right, #71d7e1, #0198b3)");
+            library_btn.setStyle("-fx-background-color: linear-gradient(to top right, #4c96a1, #bff4ff)");
 
             availableBooksShowListData();
         }
