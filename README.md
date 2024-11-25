@@ -26,7 +26,7 @@ The application is designed for librarians to manage their library. The applicat
   1. Select Usage Mode: Choose between user or admin mode.
   2. Login or Sign Up: Log in to an existing account or create a new one.
   3. Admin Features:
-    - Dashboard: Displays available books in the library, total issued books, and total users. Includes two charts for statistics on book borrowing/returning and user activity by month.
+    <space><space>- Dashboard: Displays available books in the library, total issued books, and total users. Includes two charts for statistics on book borrowing/returning and user activity by month.
     - Book Management: Allows querying books from Google Books and the library's collection. Admins can add, delete, update books, and clear the entire library collection.
     - User Management: Manages the list of library users, with permissions to add, delete, and query user information.
     - Issue Books: Handles book borrowing requests from users.
