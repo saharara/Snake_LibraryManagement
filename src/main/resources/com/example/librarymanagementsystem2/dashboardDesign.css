@@ -1,3 +1,7 @@
+.audio-toggle{
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+}
 .top-form{
     -fx-background-color: white;
     -fx-border-color: black;
@@ -22,6 +26,14 @@
 .minimize:hover{
     -fx-background-color: #ddd;
 }
+.snow-container{
+    -fx-background-image: url('pictureStyle/dashboard.png');
+    -fx-background-repeat: no-repeat;
+}
+.nav-formHorizontal{
+    -fx-background-color: #d8f2fe;
+    -fx-background-repeat: no-repeat;
+}
 .nav-btn{
     -fx-background-color: transparent;
     -fx-cursor: hand;
@@ -43,16 +55,16 @@
     -fx-background-radius: 4px;
 }
 .add-btn{
-    -fx-background-color: linear-gradient(to bottom right, #47a19a, #379672);
+    -fx-background-color: linear-gradient(to bottom right, #71d7e1, #0198b3);
     -fx-cursor: hand;
 }
 .add-btn:hover{
-    -fx-background-color: linear-gradient(to bottom right, #3e83c9, #1b7d8d);;
+    -fx-background-color: linear-gradient(to bottom right, #71d7e1, #0198b3);;
 }
 .text-field1{
     -fx-background-color: linear-gradient(to bottom, #efefef, #eee);;
     -fx-background-radius: 2px;
-    -fx-font-family: Tahoma;
+    /*-fx-font-family: Tahoma;*/
     -fx-border-color: black;
     -fx-border-radius: 2px;
     -fx-border-width: 0.4px;
@@ -98,20 +110,13 @@
 }
 
 .issue-btn{
-    -fx-background-color: linear-gradient(to bottom right, #003e49, #5aacb5);
+    -fx-background-color: linear-gradient(to bottom right, #71d7e1, #0198b3);
     -fx-background-radius: 5px; // độ tròn
-    -fx-cursor: hand;   // thay đổi con trỏ chuột
-    -fx-text-fill: white; // màu chữ
-    -fx-font-size: 20px; // kích thước chữ
+-fx-cursor: hand;   // thay đổi con trỏ chuột
+-fx-text-fill: white; // màu chữ
+-fx-font-size: 20px; // kích thước chữ
 }
 
 .issue-btn:hover{
     -fx-background-color: linear-gradient(to bottom right, #71d7e1, #0198b3);
-}
-.nav-form1{
-    -fx-background-color: linear-gradient(to bottom right, #71d7e1, #0198b3);
-}
-.snow-container {
-    -fx-background-image: url('pictureStyle/dashboard.png');
-    -fx-background-repeat: no-repeat;
 }

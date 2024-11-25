@@ -1,9 +1,14 @@
 .gradient {
-    -fx-background-image: url('pictureStyle/login.png');
+    -fx-background-image: url('pictureStyle/Userlogin.png');
     -fx-background-position: left;
     -fx-background-repeat: no-repeat;
 }
 
+.gradientAdmin {
+    -fx-background-image: url('pictureStyle/adminLogin.png');
+    -fx-background-position: left;
+    -fx-background-repeat: no-repeat;
+}
 .white-form{
     -fx-background-color: transparent;
 }
@@ -28,7 +33,7 @@
 
 .text-field{
     -fx-background-color: transparent; // trong suốt
-    -fx-border-color: linear-gradient(to bottom right, #082184, #2359be);
+-fx-border-color: linear-gradient(to bottom right, #082184, #2359be);
     -fx-border-width: 0.5px;
 }
 

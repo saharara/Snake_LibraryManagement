@@ -7,6 +7,10 @@ public class User {
     private String email;
     private String image;
 
+    public User(String msv) {
+        this.msv = msv;
+    }
+
     public User(String msv, String name, String phoneNumber, String email, String image) {
         this.msv = msv;
         this.name = name;

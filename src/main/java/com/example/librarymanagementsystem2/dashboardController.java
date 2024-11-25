@@ -10,14 +10,14 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -33,7 +33,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.*;
 
-public class dashboardController implements Initializable {
+public class dashboardController extends DashboardBaseController implements Initializable {
 
     @FXML
     private TextField availableBooks_ISBN;
@@ -115,8 +115,6 @@ public class dashboardController implements Initializable {
     @FXML
     private Button issue_btn;
 
-    @FXML
-    private Button chat_bot;
     @FXML
     private Button listOfissue_btn;
     @FXML
@@ -232,103 +230,102 @@ public class dashboardController implements Initializable {
 
     @FXML
     private TableColumn<ListIssue, String> listIssue_col_title;
-    private int idIssue;
 
+    @FXML
+    private BarChart<String, Number> userChart;
+
+    @FXML
+    private BarChart<String, Number> overviewChart;
     @FXML
     private AnchorPane snowContainer;
 
-    private Connection connect;
-    private Connection connect1;
-    private PreparedStatement pst;
-    private PreparedStatement pst1;
-    private ResultSet rs;
-    private ResultSet rs1;
-
+    private int idIssue;
     private Image image;
 
     public void availableBooksAdd() throws SQLException {
-        if (availableBooks_ISBN.getText().isEmpty()
-        || availableBooks_title.getText().isEmpty()
-        || availableBooks_author.getText().isEmpty()
-        || availableBooks_genre.getText().isEmpty()
-        || availableBooks_quantity.getText().isEmpty()
-        || availableBooks_date.getValue() == null
-        || getData.path == "" || getData.path == null) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error Message");
-            alert.setHeaderText(null);
-            alert.setContentText("Please fill all blank fields");
-            alert.showAndWait();
-        } else {
-            connect = database.connectDB();
-            connect.setAutoCommit(false);
-            try {
-                // kiểm tra xem isbn tồn tại chưa
-                String sqlcheck = "SELECT isbn FROM book WHERE isbn = ?";
-                pst = connect.prepareStatement(sqlcheck);
+        if (availableBooks_ISBN.getText().isEmpty() ||
+                availableBooks_title.getText().isEmpty() ||
+                availableBooks_author.getText().isEmpty() ||
+                availableBooks_genre.getText().isEmpty() ||
+                availableBooks_quantity.getText().isEmpty()) {
+
+            showAlert(Alert.AlertType.ERROR, "Error Message", "Please fill all required fields!");
+            return;
+        }
+
+        connect = database.connectDB();
+        connect.setAutoCommit(false);
+
+        try {
+            // Check if ISBN already exists
+            String sqlCheck = "SELECT isbn FROM book WHERE isbn = ?";
+            pst = connect.prepareStatement(sqlCheck);
+            pst.setString(1, availableBooks_ISBN.getText());
+            rs = pst.executeQuery();
+
+            if (rs.next()) {
+                showAlert(Alert.AlertType.ERROR, "Error Message",
+                        "Book ISBN: " + availableBooks_ISBN.getText() + " already exists!");
+            } else {
+                // Insert book data
+                String sqlInsert = "INSERT INTO book(isbn, title, author, genre, quantity, remain, issued) VALUES (?,?,?,?,?,?,?)";
+                pst = connect.prepareStatement(sqlInsert);
                 pst.setString(1, availableBooks_ISBN.getText());
-                rs = pst.executeQuery();
+                pst.setString(2, availableBooks_title.getText());
+                pst.setString(3, availableBooks_author.getText());
+                pst.setString(4, availableBooks_genre.getText());
+                pst.setInt(5, Integer.parseInt(availableBooks_quantity.getText()));
+                pst.setInt(6, Integer.parseInt(availableBooks_quantity.getText()));
+                pst.setInt(7, 0);
 
-                if (rs.next()) {
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setTitle("Error Message");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Book ISBN: " + availableBooks_ISBN.getText() + " was already exist!");
-                    alert.showAndWait();
-                } else {
+                pst.executeUpdate();
 
-                    String sql = "INSERT INTO book VALUES (?,?,?,?,?,?,?,?,?)";
-                    pst = connect.prepareStatement(sql);
-                    pst.setString(1, availableBooks_ISBN.getText());
-                    pst.setString(2, availableBooks_title.getText());
-                    pst.setString(3, availableBooks_author.getText());
-                    pst.setString(4, availableBooks_genre.getText());
-
-                    String uri = getData.path;
-                    uri = uri.replace("\\", "\\\\");
-                    pst.setString(5, uri);
-
-                    pst.setString(6, String.valueOf(availableBooks_date.getValue()));
-                    pst.setInt(7, Integer.valueOf(availableBooks_quantity.getText()));
-                    pst.setInt(8, Integer.valueOf(availableBooks_quantity.getText()));
-                    pst.setInt(9, 0);
-
-
+                // Update publication date if provided
+                if (availableBooks_date.getValue() != null) {
+                    String sqlUpdateDate = "UPDATE book SET pub_date = ? WHERE isbn = ?";
+                    pst = connect.prepareStatement(sqlUpdateDate);
+                    pst.setString(1, availableBooks_date.getValue().toString());
+                    pst.setString(2, availableBooks_ISBN.getText());
                     pst.executeUpdate();
-                    connect.commit(); // commit de update vao csdl
-
-
-                    // thông báo thêm thành công
-
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Information Message");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Successfully Added!");
-                    alert.showAndWait();
-
-                    availableBooksShowListData(); // show ra bảng
-                    availableBooksClear(); // clear fields
                 }
-            } catch (Exception e) {
-                connect.rollback();
-                e.printStackTrace();
+
+                // Update image path if provided
+                if (getData.path != null && !getData.path.isEmpty()) {
+                    String sqlUpdateImage = "UPDATE book SET image = ? WHERE isbn = ?";
+                    pst = connect.prepareStatement(sqlUpdateImage);
+                    String uri = getData.path.replace("\\", "\\\\");
+                    pst.setString(1, uri);
+                    pst.setString(2, availableBooks_ISBN.getText());
+                    pst.executeUpdate();
+                }
+
+                connect.commit(); // Commit transaction
+                showAlert(Alert.AlertType.INFORMATION, "Information Message", "Successfully Added!");
+
+                // Refresh data and clear fields
+                availableBooksShowListData();
+                availableBooksClear();
             }
+        } catch (Exception e) {
+            connect.rollback(); // Rollback on error
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Error Message", "Failed to add book. Please try again.");
+        } finally {
+            if (pst != null) pst.close();
+            if (rs != null) rs.close();
+            if (connect != null) connect.setAutoCommit(true); // Reset auto-commit
         }
     }
+
 
     public void setAvailableBooksUpdate() throws SQLException {
         if (availableBooks_ISBN.getText().isEmpty()
                 || availableBooks_title.getText().isEmpty()
                 || availableBooks_author.getText().isEmpty()
                 || availableBooks_genre.getText().isEmpty()
-                || availableBooks_quantity.getText().isEmpty()
-                || availableBooks_date.getValue() == null
-                || getData.path == "" || getData.path == null) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error Message");
-            alert.setHeaderText(null);
-            alert.setContentText("Please fill all blank fields");
-            alert.showAndWait();
+                || availableBooks_quantity.getText().isEmpty()) {
+
+            showAlert(Alert.AlertType.ERROR, "Error Message", "Please fill all required blank fields");
         } else {
             // check trong csdl có isbn đấy không:
             connect = database.connectDB();
@@ -354,31 +351,22 @@ public class dashboardController implements Initializable {
                     int quantity = Integer.parseInt(availableBooks_quantity.getText());
 
                     if (quantity >= issued) {
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.setTitle("Information Message");
-                        alert.setHeaderText(null);
-                        alert.setContentText("Are you sure you want to UPDATE Book with ISBN: "+ availableBooks_ISBN.getText() +"?");
-                        Optional<ButtonType> option = alert.showAndWait();
+                        Optional<ButtonType> option = showChooseAlter(Alert.AlertType.INFORMATION
+                                , "Information Message", "Are you sure you want to UPDATE Book with ISBN: "+ availableBooks_ISBN.getText() +"?");
+
 
                         if (option.get().equals(ButtonType.OK)) {
                             // update ở bảng book
-                            String sqlUpdate = "UPDATE book SET title = ?, author = ?, genre = ?, image = ?" +
-                                    ", pub_date = ?, quantity = ?, remain = ? " +
+                            String sqlUpdate = "UPDATE book SET title = ?, author = ?, genre = ?, quantity = ?, remain = ? " +
                                     "WHERE isbn = ?";
                             pst = connect.prepareStatement(sqlUpdate);
                             pst.setString(1, availableBooks_title.getText());
                             pst.setString(2, availableBooks_author.getText());
                             pst.setString(3, availableBooks_genre.getText());
-                            pst.setString(8,availableBooks_ISBN.getText());
 
-                            String uri = getData.path;
-                            uri = uri.replace("\\", "\\\\");
-                            pst.setString(4, uri);
+                            pst.setInt(4, Integer.parseInt(availableBooks_quantity.getText()));
 
-                            pst.setString(5, String.valueOf(availableBooks_date.getValue()));
-                            pst.setInt(6, Integer.parseInt(availableBooks_quantity.getText()));
-
-                            // tinh so sach con lai
+                            // find the remain books
                             int rmain = 0;
                             String sqlremain = "SELECT issued FROM book WHERE isbn = ?";
                             pst1 = connect1.prepareStatement(sqlremain);
@@ -388,7 +376,9 @@ public class dashboardController implements Initializable {
                             rmain = rs1.getInt("issued"); // issued
                             int sumbook = Integer.parseInt(availableBooks_quantity.getText());
                             rmain = sumbook - rmain; // remain
-                            pst.setInt(7, rmain);
+
+                            pst.setInt(5, rmain);
+                            pst.setString(6,availableBooks_ISBN.getText());
 
                             pst.executeUpdate();
 
@@ -399,11 +389,26 @@ public class dashboardController implements Initializable {
                             pst.setString(2,availableBooks_ISBN.getText());
                             pst.executeUpdate();
 
-                            alert = new Alert(Alert.AlertType.INFORMATION);
-                            alert.setTitle("Information Message");
-                            alert.setHeaderText(null);
-                            alert.setContentText("Successfully Updated!");
-                            alert.showAndWait();
+                            // Update publication date if provided
+                            if (availableBooks_date.getValue() != null) {
+                                String sqlUpdateDate = "UPDATE book SET pub_date = ? WHERE isbn = ?";
+                                pst = connect.prepareStatement(sqlUpdateDate);
+                                pst.setString(1, availableBooks_date.getValue().toString());
+                                pst.setString(2, availableBooks_ISBN.getText());
+                                pst.executeUpdate();
+                            }
+
+                            // Update image path if provided
+                            if (getData.path != null && !getData.path.isEmpty()) {
+                                String sqlUpdateImage = "UPDATE book SET image = ? WHERE isbn = ?";
+                                pst = connect.prepareStatement(sqlUpdateImage);
+                                String uri = getData.path.replace("\\", "\\\\");
+                                pst.setString(1, uri);
+                                pst.setString(2, availableBooks_ISBN.getText());
+                                pst.executeUpdate();
+                            }
+
+                            showAlert(Alert.AlertType.INFORMATION, "Information Message", "Successfully Updated!");
 
                             availableBooksShowListData();
                             availableBooksClear();
@@ -416,9 +421,7 @@ public class dashboardController implements Initializable {
                         alert.showAndWait();
                     }
 
-
-
-                // nếu không thì thông báo lỗi
+                    // nếu không thì thông báo lỗi
                 } else {
                     Alert alert = new Alert(Alert.AlertType.ERROR);
                     alert.setTitle("Error Message");
@@ -437,14 +440,9 @@ public class dashboardController implements Initializable {
                 || availableBooks_title.getText().isEmpty()
                 || availableBooks_author.getText().isEmpty()
                 || availableBooks_genre.getText().isEmpty()
-                || availableBooks_quantity.getText().isEmpty()
-                || availableBooks_date.getValue() == null
-                || getData.path == "" || getData.path == null) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error Message");
-            alert.setHeaderText(null);
-            alert.setContentText("Please fill all blank fields");
-            alert.showAndWait();
+                || availableBooks_quantity.getText().isEmpty()) {
+
+            showAlert(Alert.AlertType.ERROR, "Error Message", "Please fill all blank fields");
         } else {
             // check trong csdl có isbn đấy không:
             connect = database.connectDB();
@@ -469,11 +467,9 @@ public class dashboardController implements Initializable {
                     issu = rs1.getInt("issued");
 
                     if (issu == 0) {
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.setTitle("Information Message");
-                        alert.setHeaderText(null);
-                        alert.setContentText("Are you sure you want to DELETE Book with ISBN: "+ availableBooks_ISBN.getText() +"?");
-                        Optional<ButtonType> option = alert.showAndWait();
+
+                        Optional<ButtonType> option = showChooseAlter(Alert.AlertType.INFORMATION
+                                , "Information Message", "Are you sure you want to DELETE Book with ISBN: "+ availableBooks_ISBN.getText() +"?");
 
                         if (option.get().equals(ButtonType.OK)) {
                             String sqlDelete = "DELETE FROM book WHERE isbn = ?;";
@@ -482,29 +478,19 @@ public class dashboardController implements Initializable {
                             pst.executeUpdate();
                             connect.commit(); // commit de update vao csdl
 
-                            alert = new Alert(Alert.AlertType.INFORMATION);
-                            alert.setTitle("Information Message");
-                            alert.setHeaderText(null);
-                            alert.setContentText("Successfully Delete!");
-                            alert.showAndWait();
+                            showAlert(Alert.AlertType.INFORMATION, "Information Message", "Successfully Deleted!");
 
                             availableBooksShowListData();
                             availableBooksClear();
                         }
                     } else { // quyen sach dang duoc cho muon nen khong xoa duoc
-                        Alert alert = new Alert(Alert.AlertType.ERROR);
-                        alert.setTitle("Error Message");
-                        alert.setHeaderText(null);
-                        alert.setContentText("This book is on loan!");
-                        alert.showAndWait();
+
+                        showAlert(Alert.AlertType.ERROR, "Error Message", "This book is on loan!");
                     }
                     // nếu không thì thông báo lỗi
                 } else {
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setTitle("Error Message");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Not found Book ISBN");
-                    alert.showAndWait();
+
+                    showAlert(Alert.AlertType.ERROR, "Error Message", "Book not found!");
                 }
 
             } catch (Exception e) {
@@ -578,6 +564,7 @@ public class dashboardController implements Initializable {
         sortList.comparatorProperty().bind(availableBooks_tableView.comparatorProperty());
         availableBooks_tableView.setItems(sortList);
     }
+
     public ObservableList<bookData> availableBooksListData() throws SQLException {
 
         ObservableList<bookData> listData = FXCollections.observableArrayList();
@@ -621,6 +608,40 @@ public class dashboardController implements Initializable {
         availableBooks_tableView.setItems(availableBooksList);
     }
 
+//    public void availableBooksSelect() {
+//        bookData bookD = availableBooks_tableView.getSelectionModel().getSelectedItem();
+//        int num = availableBooks_tableView.getSelectionModel().getSelectedIndex();
+//
+//        if(num < 0) {
+//            return;
+//        }
+//
+//        availableBooks_ISBN.setText(bookD.getIsbn());
+//        availableBooks_title.setText(bookD.getTitle());
+//        availableBooks_author.setText(bookD.getAuthor());
+//        availableBooks_genre.setText(bookD.getGenre());
+//        if(bookD.getDate() != null) {
+//            try {
+//                availableBooks_date.setValue(LocalDate.parse(String.valueOf(bookD.getDate())));
+//            } catch (Exception e) {
+//                System.out.println("loi get ngay");
+//            }
+//        } else availableBooks_date.setValue(null);
+//
+//        availableBooks_quantity.setText(String.valueOf(bookD.getQuantity()));
+//
+//        if(bookD.getImage() != null) {
+//            getData.path = bookD.getImage();
+//
+//            String uri = "file:" + bookD.getImage();
+//
+//            image = new Image(uri, 112, 137, false, true);
+//            availableBooks_imageView.setImage(image);
+//
+//        } else availableBooks_imageView.setImage(null);
+//
+//    }
+
     public void availableBooksSelect() {
         bookData bookD = availableBooks_tableView.getSelectionModel().getSelectedItem();
         int num = availableBooks_tableView.getSelectionModel().getSelectedIndex();
@@ -639,12 +660,15 @@ public class dashboardController implements Initializable {
             System.out.println("loi get ngay");
         }
         availableBooks_quantity.setText(String.valueOf(bookD.getQuantity()));
+        if(bookD.getImage() != null) {
+            getData.path = bookD.getImage();
 
-        getData.path = bookD.getImage();
-
-        String imageUrl = bookD.getImage();
-        Image image = new Image(imageUrl, 112, 137, false, true);
-        availableBooks_imageView.setImage(image);
+            String imageUrl = bookD.getImage();
+            Image image = new Image(imageUrl, 112, 137, false, true);
+            availableBooks_imageView.setImage(image);
+        } else {
+            availableBooks_imageView.setImage(null);
+        }
     }
 
     public ObservableList<User> usersListData() throws SQLException {
@@ -698,12 +722,15 @@ public class dashboardController implements Initializable {
         user_phoneNumber.setText(userD.getPhoneNumber());
         user_email.setText(userD.getEmail());
 
+
         getData.path = userD.getImage();
 
         String uri = "file:" + userD.getImage();
 
         image = new Image(uri, 112, 137, false, true);
         user_imageView.setImage(image);
+
+
     }
 
     public void usersInsertImage() { // ham cho nut import
@@ -725,12 +752,11 @@ public class dashboardController implements Initializable {
         if (user_msv.getText().isEmpty()
                 || user_name.getText().isEmpty()
                 || user_phoneNumber.getText().isEmpty()
-                || user_email.getText().isEmpty()
-                || getData.path == "" || getData.path == null) {
+                || user_email.getText().isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error Message");
             alert.setHeaderText(null);
-            alert.setContentText("Please fill all blank fields");
+            alert.setContentText("Please fill all required blank fields");
             alert.showAndWait();
         } else {
             connect = database.connectDB();
@@ -749,21 +775,34 @@ public class dashboardController implements Initializable {
                     alert.setContentText("Student code: " + user_msv.getText() + " was already exist!");
                     alert.showAndWait();
                 } else {
-
-                    String sql = "INSERT INTO user VALUES (?,?,?,?,?)";
+                    String sql = "INSERT INTO user(msv, name, phonenumber, email) VALUES (?,?,?,?)";
                     pst = connect.prepareStatement(sql);
                     pst.setString(1, user_msv.getText());
                     pst.setString(2, user_name.getText());
                     pst.setString(3, user_phoneNumber.getText());
                     pst.setString(4, user_email.getText());
 
-                    String uri = getData.path;
-                    uri = uri.replace("\\", "\\\\");
-                    pst.setString(5, uri);
-
                     pst.executeUpdate();
                     connect.commit(); // commit de update vao csdl
+                    pst.close();
 
+                    if(getData.path != "" || getData.path != null) {
+                        String sqlI = "UPDATE user SET image = ? WHERE msv = ?";
+                        pst = connect.prepareStatement(sqlI);
+                        String uri = getData.path;
+                        uri = uri.replace("\\", "\\\\");
+                        pst.setString(1, uri);
+                        pst.setString(2, user_msv.getText());
+                        pst.executeUpdate();
+                        connect.commit();
+                    }
+
+                    String sqlSetPass = "UPDATE user SET password = msv WHERE msv = ?";
+
+                    pst = connect.prepareStatement(sqlSetPass);
+                    pst.setString(1, user_msv.getText());
+                    pst.executeUpdate();
+                    connect.commit();
 
                     // thông báo thêm thành công
 
@@ -787,8 +826,7 @@ public class dashboardController implements Initializable {
         if (user_msv.getText().isEmpty()
                 || user_name.getText().isEmpty()
                 || user_phoneNumber.getText().isEmpty()
-                || user_email.getText().isEmpty()
-                || getData.path == "" || getData.path == null) {
+                || user_email.getText().isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error Message");
             alert.setHeaderText(null);
@@ -804,28 +842,29 @@ public class dashboardController implements Initializable {
 
                 // nếu tìm thấy thì update ở 2 table
                 if (rs.next()) {
-
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Information Message");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Are you sure you want to UPDATE student with student code: "+ user_msv.getText() +"?");
-                    Optional<ButtonType> option = alert.showAndWait();
+                    Optional<ButtonType> option = showChooseAlter(Alert.AlertType.INFORMATION, "Information Message"
+                            , "Are you sure you want to UPDATE student with student code: "+ user_msv.getText() +"?");
 
                     if (option.get().equals(ButtonType.OK)) {
-                        String sqlUpdate = "UPDATE user SET name = ?, phonenumber = ?, email = ?, image = ? " +
+                        String sqlUpdate = "UPDATE user SET name = ?, phonenumber = ?, email = ? " +
                                 "WHERE msv = ?";
                         pst = connect.prepareStatement(sqlUpdate);
                         pst.setString(1, user_name.getText());
                         pst.setString(2, user_phoneNumber.getText());
                         pst.setString(3, user_email.getText());
-
-                        String uri = getData.path;
-                        uri = uri.replace("\\", "\\\\");
-                        pst.setString(4, uri);
-
-                        pst.setString(5, user_msv.getText());
+                        pst.setString(4, user_msv.getText());
 
                         pst.executeUpdate();
+
+                        if(getData.path != "" && getData.path != null) {
+                            String sqlI = "UPDATE user SET image = ? WHERE msv = ?";
+                            pst = connect.prepareStatement(sqlI);
+                            String uri = getData.path;
+                            uri = uri.replace("\\", "\\\\");
+                            pst.setString(1, uri);
+                            pst.setString(2, user_msv.getText());
+                            pst.executeUpdate();
+                        }
 
                         // update ở bảng issue
                         String sqlUpdate1 = "UPDATE issue SET name = ? " +
@@ -836,21 +875,13 @@ public class dashboardController implements Initializable {
 
                         pst.executeUpdate();
 
-                        alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.setTitle("Information Message");
-                        alert.setHeaderText(null);
-                        alert.setContentText("Successfully Updated!");
-                        alert.showAndWait();
+                        showAlert(Alert.AlertType.INFORMATION, "Information Message", "Successfully Updated!");
 
                         usersShowListData();
                         usersClear();
                     }
                 } else {
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setTitle("Error Message");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Not found Student code");
-                    alert.showAndWait();
+                    showAlert(Alert.AlertType.ERROR, "Error Message", "Student code not found!");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -862,8 +893,7 @@ public class dashboardController implements Initializable {
         if (user_msv.getText().isEmpty()
                 || user_name.getText().isEmpty()
                 || user_phoneNumber.getText().isEmpty()
-                || user_email.getText().isEmpty()
-                || getData.path == "" || getData.path == null) {
+                || user_email.getText().isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error Message");
             alert.setHeaderText(null);
@@ -881,19 +911,15 @@ public class dashboardController implements Initializable {
                 // nếu tìm thấy msv trong bảng users
                 if (rs.next()) {
                     // check trong bảng issue nếu không có mới xóa được
-                    String sql1 = "SELECT msv FROM issue WHERE msv = ?";
+                    String sql1 = "SELECT COUNT(*) FROM issue WHERE msv = ?" + "AND returnDate is null";
                     pst = connect.prepareStatement(sql1);
                     pst.setString(1, user_msv.getText());
                     rs = pst.executeQuery();
 
                     // nếu có ở bảng issue thì không xóa được
-                    if (rs.next()) {
-                        Alert alert = new Alert(Alert.AlertType.ERROR);
-                        alert.setTitle("Error Message");
-                        alert.setHeaderText(null);
-                        alert.setContentText("This student is on the all issue list.");
-                        alert.showAndWait();
-                    //  xóa
+                    if (rs.next() && rs.getInt(1) > 0) {
+                        showAlert(Alert.AlertType.ERROR, "Error Message", "This student is borrowing books");
+                        //  xóa
                     } else {
                         Alert alert = new Alert(Alert.AlertType.INFORMATION);
                         alert.setTitle("Information Message");
@@ -1292,11 +1318,8 @@ public class dashboardController implements Initializable {
     }
     public void listIssueDelete() {
         if (msvIssue == null || isbnIssue == null || issueDateIssue == null) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error Message");
-            alert.setHeaderText(null);
-            alert.setContentText("Please select the item to delete");
-            alert.showAndWait();
+
+            showAlert(Alert.AlertType.ERROR, "Error Message", "Please select the item to delete");
         } else {
             // kiem tra xem return chua
             connect = database.connectDB();
@@ -1304,29 +1327,17 @@ public class dashboardController implements Initializable {
                 String sql = "SELECT returnDate FROM issue WHERE id = ?";
                 pst = connect.prepareStatement(sql);
                 pst.setString(1, idIssue + "");
-//                pst.setString(2, isbnIssue);
-//
-//                java.sql.Date sqlIssueDate = new java.sql.Date(issueDateIssue.getTime());
-//                pst.setDate(3, sqlIssueDate);
-
                 rs = pst.executeQuery();
 
                 rs.next();
                 Date retuDate = rs.getDate("returnDate");
                 if (retuDate == null) { // chua return thi khong xoa
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setTitle("Error Message");
-                    alert.setHeaderText(null);
-                    alert.setContentText("This book has been borrowed");
-                    alert.showAndWait();
+
+                    showAlert(Alert.AlertType.ERROR, "Error Message", "This book has been borrowed");
                 } else { // xoa
                     String sql1 = "DELETE FROM issue WHERE id = ?";
                     pst = connect.prepareStatement(sql1);
                     pst.setString(1, idIssue + "");
-//                    pst.setString(2, isbnIssue);
-//
-//                    java.sql.Date sqlIssueDate1 = new java.sql.Date(issueDateIssue.getTime());
-//                    pst.setDate(3, sqlIssueDate1);
                     pst.executeUpdate();
 
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -1348,82 +1359,71 @@ public class dashboardController implements Initializable {
 
     public void listIssueReturn() {
         if (msvIssue == null || isbnIssue == null || issueDateIssue == null) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error Message");
-            alert.setHeaderText(null);
-            alert.setContentText("Please select the item to return");
-            alert.showAndWait();
+
+            showAlert(Alert.AlertType.ERROR, "Error Message", "Please select the item to return");
+
         } else {
-            // kiem tra xem return chua
-            connect = database.connectDB();
-            try {
-                String sql = "SELECT returnDate FROM issue WHERE id = ?";
-                pst = connect.prepareStatement(sql);
-                pst.setString(1, idIssue + "");
-//                pst.setString(2, isbnIssue);
-//
-//                java.sql.Date sqlIssueDate = new java.sql.Date(issueDateIssue.getTime());
-//                pst.setDate(3, sqlIssueDate);
+            Optional<ButtonType> option = showChooseAlter(Alert.AlertType.INFORMATION, "Information Message",
+                    "Are you sure you want to return this book?");
+            if (option.get() == ButtonType.OK) {
 
-                rs = pst.executeQuery();
+                // kiem tra xem return chua
+                connect = database.connectDB();
+                try {
+                    String sql = "SELECT returnDate FROM issue WHERE id = ?";
+                    pst = connect.prepareStatement(sql);
+                    pst.setString(1, idIssue + "");
+                    rs = pst.executeQuery();
 
-                rs.next();
-                Date retuDate = rs.getDate("returnDate");
+                    rs.next();
+                    Date retuDate = rs.getDate("returnDate");
 
-                // neu chua tra thi tra
-                if (retuDate == null) {
-                    String sql1 = "UPDATE issue SET returnDate = ? WHERE id = ?";
-                    pst = connect.prepareStatement(sql1);
+                    // neu chua tra thi tra
+                    if (retuDate == null) {
+                        String sql1 = "UPDATE issue SET returnDate = ? WHERE id = ?";
+                        pst = connect.prepareStatement(sql1);
 
-                    Date homnay = new Date();
-                    java.sql.Date homnay1 = new java.sql.Date(homnay.getTime());
+                        Date homnay = new Date();
+                        java.sql.Date homnay1 = new java.sql.Date(homnay.getTime());
 
-                    pst.setDate(1, homnay1);
-                    pst.setString(2, idIssue + "");
-//                    pst.setString(3,isbnIssue);
-//
-//                    java.sql.Date sqlIssueDate1 = new java.sql.Date(issueDateIssue.getTime());
-//                    pst.setDate(4, sqlIssueDate1);
-                    pst.executeUpdate();
+                        pst.setDate(1, homnay1);
+                        pst.setString(2, idIssue + "");
+                        pst.executeUpdate();
 
-                    // issued - 1
-                    String sql2 = "UPDATE book SET issued = issued - 1 WHERE isbn = ?";
-                    pst = connect.prepareStatement(sql2);
-                    pst.setString(1,isbnIssue);
-                    pst.executeUpdate();
-                    // remain - 1
-                    String sql3 = "UPDATE book SET remain = remain + 1 WHERE isbn = ?";
-                    pst = connect.prepareStatement(sql3);
-                    pst.setString(1,isbnIssue);
-                    pst.executeUpdate();
+                        // issued - 1
+                        String sql2 = "UPDATE book SET issued = issued - 1 WHERE isbn = ?";
+                        pst = connect.prepareStatement(sql2);
+                        pst.setString(1, isbnIssue);
+                        pst.executeUpdate();
+                        // remain - 1
+                        String sql3 = "UPDATE book SET remain = remain + 1 WHERE isbn = ?";
+                        pst = connect.prepareStatement(sql3);
+                        pst.setString(1, isbnIssue);
+                        pst.executeUpdate();
 
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Information Message");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Successfully Return!");
-                    alert.showAndWait();
-                    issuesShowListData();
+                        showAlert(Alert.AlertType.INFORMATION, "Information Message", "Successfully Return!");
+                        issuesShowListData();
 
-                    //delete xong cho cac bien la null
-                    msvIssue = null; isbnIssue = null; issueDateIssue =null;
-                } else {
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setTitle("Error Message");
-                    alert.setHeaderText(null);
-                    alert.setContentText("It has been retured");
-                    alert.showAndWait();
+                        //delete xong cho cac bien la null
+                        msvIssue = null;
+                        isbnIssue = null;
+                        issueDateIssue = null;
+                    } else {
+
+                        showAlert(Alert.AlertType.ERROR, "Error Message", "This book has been retured");
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-
-            } catch (Exception e) {
-                e.printStackTrace();
             }
         }
-
     }
 
     public void displayUsername() {
         String user = getData.username;
         user = user.substring(0,1).toUpperCase() + user.substring(1);
+        username.setWrapText(true);
         username.setText(user);
     }
 
@@ -1436,11 +1436,15 @@ public class dashboardController implements Initializable {
             listIssue_form.setVisible(false);
             dashboard_form.setVisible(true);
 
-            dashboard_btn.setStyle("-fx-background-color: linear-gradient(to top right, #4c96a1, #bff4ff)");
+            dashboard_btn.setStyle("-fx-background-color: linear-gradient(to top right, #4f63b7, #709df3)");
             bookManagement_btn.setStyle("-fx-background-color: transparent");
             userManagement_btn.setStyle("-fx-background-color: transparent");
             issue_btn.setStyle("-fx-background-color: transparent");
             listOfissue_btn.setStyle("-fx-background-color: transparent");
+
+            displayDashboard();
+            overViewBarChart();
+            userBarChart();
         } else if (event.getSource() == bookManagement_btn) {
             dashboard_form.setVisible(false);
             user_form.setVisible(false);
@@ -1448,7 +1452,7 @@ public class dashboardController implements Initializable {
             listIssue_form.setVisible(false);
             availableBooks_form.setVisible(true);
 
-            bookManagement_btn.setStyle("-fx-background-color: linear-gradient(to top right, #4c96a1, #bff4ff)");
+            bookManagement_btn.setStyle("-fx-background-color: linear-gradient(to top right, #4f63b7, #709df3)");
             dashboard_btn.setStyle("-fx-background-color: transparent");
             userManagement_btn.setStyle("-fx-background-color: transparent");
             issue_btn.setStyle("-fx-background-color: transparent");
@@ -1464,7 +1468,7 @@ public class dashboardController implements Initializable {
             listIssue_form.setVisible(false);
             user_form.setVisible(true);
 
-            userManagement_btn.setStyle("-fx-background-color: linear-gradient(to top right, #4c96a1, #bff4ff)");
+            userManagement_btn.setStyle("-fx-background-color: linear-gradient(to top right, #4f63b7, #709df3)");
             bookManagement_btn.setStyle("-fx-background-color: transparent");
             dashboard_btn.setStyle("-fx-background-color: transparent");
             issue_btn.setStyle("-fx-background-color: transparent");
@@ -1484,7 +1488,7 @@ public class dashboardController implements Initializable {
             listOfissue_btn.setStyle("-fx-background-color: transparent");
             bookManagement_btn.setStyle("-fx-background-color: transparent");
             userManagement_btn.setStyle("-fx-background-color: transparent");
-            issue_btn.setStyle("-fx-background-color: linear-gradient(to top right, #4c96a1, #bff4ff)");
+            issue_btn.setStyle("-fx-background-color: linear-gradient(to top right, #4f63b7, #709df3)");
         } else if (event.getSource() == listOfissue_btn) {
             dashboard_form.setVisible(false);
             availableBooks_form.setVisible(false);
@@ -1496,7 +1500,7 @@ public class dashboardController implements Initializable {
             bookManagement_btn.setStyle("-fx-background-color: transparent");
             userManagement_btn.setStyle("-fx-background-color: transparent");
             issue_btn.setStyle("-fx-background-color: transparent");
-            listOfissue_btn.setStyle("-fx-background-color: linear-gradient(to top right, #4c96a1, #bff4ff)");
+            listOfissue_btn.setStyle("-fx-background-color: linear-gradient(to top right, #4f63b7, #709df3)");
 
             issuesShowListData();
             listIssueSearch();
@@ -1505,11 +1509,7 @@ public class dashboardController implements Initializable {
 
     public void logout(){
         try {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Confirmation Message");
-            alert.setHeaderText(null);
-            alert.setContentText("Are you sure you want o logout?");
-            Optional<ButtonType> option = alert.showAndWait();
+            Optional<ButtonType> option = showChooseAlter(Alert.AlertType.INFORMATION, "Information message", "Are you sure you want to logout?");
 
             if(option.get().equals(ButtonType.OK)) {
                 // ẩn dashboard
@@ -1535,10 +1535,125 @@ public class dashboardController implements Initializable {
         stage.setIconified(true);
     }
 
+    public void displayDashboard() throws SQLException {
+        connect = database.connectDB();
+        connect.setAutoCommit(false);
+
+        try {
+            String sql1 = "SELECT COUNT(*) FROM book";
+            pst = connect.prepareStatement(sql1);
+            ResultSet rs1 = pst.executeQuery();
+            if(rs1.next()){
+                dashboard_AB.setText(String.valueOf(rs1.getInt(1)));
+            }
+
+            String sql2 = "SELECT COUNT(*) FROM user";
+            pst = connect.prepareStatement(sql2);
+            ResultSet rs2 = pst.executeQuery();
+            if(rs2.next()){
+                dashboard_TU.setText(String.valueOf(rs2.getInt(1)));
+            }
+
+            String sql3 = "SELECT COUNT(*) FROM issue WHERE returnDate is null";
+            pst = connect.prepareStatement(sql3);
+            ResultSet rs3 = pst.executeQuery();
+
+            if(rs3.next()){
+                dashboard_TIS.setText(String.valueOf(rs3.getInt(1)));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public int getBorrowData(int m) throws SQLException {
+        connect = database.connectDB();
+        connect.setAutoCommit(false);
+        int borrowBook = 0;
+        String sql = "SELECT COUNT(*) FROM issue WHERE MONTH(issueDate) = " + "'" + m + "'" + "AND YEAR(issueDate) = YEAR(NOW());";
+        pst = connect.prepareStatement(sql);
+        rs = pst.executeQuery();
+        rs.next();
+
+        borrowBook = rs.getInt("COUNT(*)");
+        return borrowBook;
+    }
+
+    public int getReturnData(int m) throws SQLException {
+        connect = database.connectDB();
+        connect.setAutoCommit(false);
+        int returnBook = 0;
+        String sql = "SELECT COUNT(*) FROM issue WHERE MONTH(returnDate) = " + "'" + m + "'" + "AND YEAR(returnDate) = YEAR(NOW());";
+        pst = connect.prepareStatement(sql);
+        rs = pst.executeQuery();
+        rs.next();
+
+        returnBook = rs.getInt("COUNT(*)");
+        return returnBook;
+    }
+
+    public void overViewBarChart() throws SQLException {
+        overviewChart.getData().clear();
+
+        XYChart.Series<String, Number> series1 = new XYChart.Series<>();
+        series1.setName("Borrowed Books");
+
+        for (int i = 0; i < months.length; i++) {
+            int bookCount = getBorrowData(i + 1); // Fetch user count for the month
+            series1.getData().add(new XYChart.Data<>(months[i], bookCount));
+        }
+
+        XYChart.Series<String, Number> series2 = new XYChart.Series<>();
+        series2.setName("Returned Books");
+
+        for (int i = 0; i < months.length; i++) {
+            int bookCount = getReturnData(i + 1); // Fetch user count for the month
+            series2.getData().add(new XYChart.Data<>(months[i], bookCount));
+        }
+
+        overviewChart.getData().addAll(series1, series2);
+    }
+
+    public int getUserNumber(int m) throws SQLException {
+        int data = 0;
+        connect = database.connectDB();
+        connect.setAutoCommit(false);
+        String sql = "SELECT COUNT(*) FROM user WHERE MONTH(createdDate) = " +
+                "'" + m + "'" + "AND YEAR(createdDate) = YEAR(NOW());" ;
+
+        pst = connect.prepareStatement(sql);
+        ResultSet rs = pst.executeQuery();
+        if(rs.next()){
+            data = rs.getInt("COUNT(*)");
+        }
+
+        return data;
+    }
+
+    public void userBarChart() throws SQLException {
+        userChart.getData().clear();
+
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+        series.setName("Number of users");
+
+        for (int i = 0; i < months.length; i++) {
+            int userCount = getUserNumber(i + 1);
+            series.getData().add(new XYChart.Data<>(months[i], userCount));
+        }
+
+        userChart.getData().addAll(series);
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         displayUsername();
+        SnowEffect snowEffect = new SnowEffect(snowContainer, 10);
+        snowEffect.startSnowfall();
+
         try {
+            overViewBarChart();
+            userBarChart();
+            displayDashboard();
             availableBooksShowListData();
             usersShowListData();
             issuesShowListData();
@@ -1558,11 +1673,5 @@ public class dashboardController implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    @FXML
-    public void initialize() {
-        SnowEffect snowEffect = new SnowEffect(snowContainer, 5);
-        snowEffect.startSnowfall();
     }
 }

@@ -11,6 +11,21 @@ public class ListIssue {
     private Date issueDate;
     private Date dueDate;
     private Date returnDate;
+    private String author;
+    private String genre;
+    private Date pub_date;
+
+    public ListIssue(String isbn, String title, String author, String genre, Date pub_date
+            , Date issueDate, Date dueDate, Date returnDate) {
+        this.isbn = isbn;
+        this.title = title;
+        this.author = author;
+        this.genre = genre;
+        this.pub_date = pub_date;
+        this.issueDate = issueDate;
+        this.dueDate = dueDate;
+        this.returnDate = returnDate;
+    }
 
     public ListIssue(int id, String msv, String name, String isbn, String title, Date issueDate, Date dueDate, Date returnDate) {
         this.id = id;
@@ -21,6 +36,30 @@ public class ListIssue {
         this.issueDate = issueDate;
         this.dueDate = dueDate;
         this.returnDate = returnDate;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public String getGenre() {
+        return genre;
+    }
+
+    public void setGenre(String genre) {
+        this.genre = genre;
+    }
+
+    public Date getPub_date() {
+        return pub_date;
+    }
+
+    public void setPub_date(Date pub_date) {
+        this.pub_date = pub_date;
     }
 
     public int getId() {
