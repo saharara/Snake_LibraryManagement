@@ -51,7 +51,7 @@
                   </AnchorPane>
                </top>
                <left>
-                  <AnchorPane fx:id="snowContainer" onMouseExited="#initialize" onMouseMoved="#initialize" prefHeight="555.0" prefWidth="199.0" styleClass="snow-container" stylesheets="@dashboardDesign.css" BorderPane.alignment="CENTER">
+                  <AnchorPane fx:id="snowContainer" onMouseExited="#initialize" prefHeight="555.0" prefWidth="199.0" styleClass="snow-container" stylesheets="@dashboardDesign.css" BorderPane.alignment="CENTER">
                      <children>
                         <Label fx:id="username" alignment="CENTER" layoutX="17.0" layoutY="153.0" prefHeight="23.0" prefWidth="163.0" text="Admin" textFill="#006370">
                            <font>
