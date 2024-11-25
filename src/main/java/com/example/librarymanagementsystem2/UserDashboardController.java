@@ -241,7 +241,6 @@ public class UserDashboardController extends DashboardBaseController implements 
         }
     }
 
-
     public void deleteUser() {
         connect = database.connectDB();
         try {

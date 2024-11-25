@@ -511,7 +511,7 @@ public class dashboardController extends DashboardBaseController implements Init
         getData.path = "";
         availableBooks_imageView.setImage(null);
     }
-
+    
     public void availableBooksInsertImage() { // ham cho nut import
 
         FileChooser open = new FileChooser();
@@ -564,7 +564,7 @@ public class dashboardController extends DashboardBaseController implements Init
         sortList.comparatorProperty().bind(availableBooks_tableView.comparatorProperty());
         availableBooks_tableView.setItems(sortList);
     }
-
+    
     public ObservableList<bookData> availableBooksListData() throws SQLException {
 
         ObservableList<bookData> listData = FXCollections.observableArrayList();
@@ -966,7 +966,7 @@ public class dashboardController extends DashboardBaseController implements Init
         getData.path = "";
         user_imageView.setImage(null);
     }
-
+    
     public void usersSearch() {
         FilteredList<User> filter = new FilteredList<>(usersList, e -> true);
 
