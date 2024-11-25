@@ -564,6 +564,7 @@ public class dashboardController extends DashboardBaseController implements Init
         sortList.comparatorProperty().bind(availableBooks_tableView.comparatorProperty());
         availableBooks_tableView.setItems(sortList);
     }
+    
     public ObservableList<bookData> availableBooksListData() throws SQLException {
 
         ObservableList<bookData> listData = FXCollections.observableArrayList();
@@ -590,6 +591,302 @@ public class dashboardController extends DashboardBaseController implements Init
             e.printStackTrace();
         }
         return listData;
+    }
+
+    private ObservableList<bookData> availableBooksList;
+    public void availableBooksShowListData() throws SQLException {
+        availableBooksList = availableBooksListData(); //list book trong csdl
+        availableBooks_col_ISBN.setCellValueFactory(new PropertyValueFactory<>("isbn"));
+        availableBooks_col_title.setCellValueFactory(new PropertyValueFactory<>("title"));
+        availableBooks_col_author.setCellValueFactory(new PropertyValueFactory<>("author"));
+        availableBooks_col_genre.setCellValueFactory(new PropertyValueFactory<>("genre"));
+        availableBooks_col_pubdate.setCellValueFactory(new PropertyValueFactory<>("date"));
+        availableBooks_col_quantity.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+        availableBooks_col_remain.setCellValueFactory(new PropertyValueFactory<>("remain"));
+        availableBooks_col_issued.setCellValueFactory(new PropertyValueFactory<>("issued"));
+
+        availableBooks_tableView.setItems(availableBooksList);
+    }
+
+//    public void availableBooksSelect() {
+//        bookData bookD = availableBooks_tableView.getSelectionModel().getSelectedItem();
+//        int num = availableBooks_tableView.getSelectionModel().getSelectedIndex();
+//
+//        if(num < 0) {
+//            return;
+//        }
+//
+//        availableBooks_ISBN.setText(bookD.getIsbn());
+//        availableBooks_title.setText(bookD.getTitle());
+//        availableBooks_author.setText(bookD.getAuthor());
+//        availableBooks_genre.setText(bookD.getGenre());
+//        if(bookD.getDate() != null) {
+//            try {
+//                availableBooks_date.setValue(LocalDate.parse(String.valueOf(bookD.getDate())));
+//            } catch (Exception e) {
+//                System.out.println("loi get ngay");
+//            }
+//        } else availableBooks_date.setValue(null);
+//
+//        availableBooks_quantity.setText(String.valueOf(bookD.getQuantity()));
+//
+//        if(bookD.getImage() != null) {
+//            getData.path = bookD.getImage();
+//
+//            String uri = "file:" + bookD.getImage();
+//
+//            image = new Image(uri, 112, 137, false, true);
+//            availableBooks_imageView.setImage(image);
+//
+//        } else availableBooks_imageView.setImage(null);
+//
+//    }
+
+    public void availableBooksSelect() {
+        bookData bookD = availableBooks_tableView.getSelectionModel().getSelectedItem();
+        int num = availableBooks_tableView.getSelectionModel().getSelectedIndex();
+
+        if (num < 0) {
+            return;
+        }
+
+        availableBooks_ISBN.setText(bookD.getIsbn());
+        availableBooks_title.setText(bookD.getTitle());
+        availableBooks_author.setText(bookD.getAuthor());
+        availableBooks_genre.setText(bookD.getGenre());
+        try {
+            availableBooks_date.setValue(LocalDate.parse(String.valueOf(bookD.getDate())));
+        } catch (Exception e) {
+            System.out.println("loi get ngay");
+        }
+        availableBooks_quantity.setText(String.valueOf(bookD.getQuantity()));
+        if(bookD.getImage() != null) {
+            getData.path = bookD.getImage();
+
+            String imageUrl = bookD.getImage();
+            Image image = new Image(imageUrl, 112, 137, false, true);
+            availableBooks_imageView.setImage(image);
+        } else {
+            availableBooks_imageView.setImage(null);
+        }
+    }
+
+    public ObservableList<User> usersListData() throws SQLException {
+
+        ObservableList<User> listData = FXCollections.observableArrayList();
+        connect = database.connectDB();
+        connect.setAutoCommit(false);
+
+        try {
+            String sql = "SELECT * FROM user";
+            pst = connect.prepareStatement(sql);
+            rs = pst.executeQuery();
+
+            User userD;
+
+            while(rs.next()) {
+                userD = new User(rs.getString("msv"), rs.getString("name")
+                        , rs.getString("phonenumber"), rs.getString("email")
+                        , rs.getString("image"));
+                listData.add(userD);
+            }
+            connect.commit();
+        } catch (Exception e){
+            connect.rollback();
+            e.printStackTrace();
+        }
+        return listData;
+    }
+
+    private ObservableList<User> usersList;
+    public void usersShowListData() throws SQLException {
+        usersList = usersListData(); //list user trong csdl
+        user_col_msv.setCellValueFactory(new PropertyValueFactory<>("msv"));
+        user_col_name.setCellValueFactory(new PropertyValueFactory<>("name"));
+        user_col_phoneNumber.setCellValueFactory(new PropertyValueFactory<>("phoneNumber"));
+        user_col_email.setCellValueFactory(new PropertyValueFactory<>("email"));
+
+        user_tableView.setItems(usersList);
+    }
+
+    public void usersSelect() {
+        User userD = user_tableView.getSelectionModel().getSelectedItem();
+        int num = user_tableView.getSelectionModel().getSelectedIndex();
+
+        if(num < 0) {
+            return;
+        }
+
+        user_msv.setText(userD.getMsv());
+        user_name.setText(userD.getName());
+        user_phoneNumber.setText(userD.getPhoneNumber());
+        user_email.setText(userD.getEmail());
+
+
+        getData.path = userD.getImage();
+
+        String uri = "file:" + userD.getImage();
+
+        image = new Image(uri, 112, 137, false, true);
+        user_imageView.setImage(image);
+
+
+    }
+
+    public void usersInsertImage() { // ham cho nut import
+
+        FileChooser open = new FileChooser();
+        open.setTitle("Open Image File1");
+        open.getExtensionFilters().add(new FileChooser.ExtensionFilter("File Image1", "*jpg", "*png"));
+
+        File file = open.showOpenDialog(main_form.getScene().getWindow()); // đợi người dùng chọn file
+
+        if (file != null) {
+            getData.path = file.getAbsolutePath();
+            image = new Image(file.toURI().toString(), 112, 137, false, true);
+            user_imageView.setImage(image);
+        }
+    }
+
+    public void usersAdd() throws SQLException {
+        if (user_msv.getText().isEmpty()
+                || user_name.getText().isEmpty()
+                || user_phoneNumber.getText().isEmpty()
+                || user_email.getText().isEmpty()) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error Message");
+            alert.setHeaderText(null);
+            alert.setContentText("Please fill all required blank fields");
+            alert.showAndWait();
+        } else {
+            connect = database.connectDB();
+            connect.setAutoCommit(false);
+            try {
+                // kiểm tra xem msv tồn tại chưa
+                String sqlcheck = "SELECT msv FROM user WHERE msv = ?";
+                pst = connect.prepareStatement(sqlcheck);
+                pst.setString(1, user_msv.getText());
+                rs = pst.executeQuery();
+
+                if (rs.next()) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Student code: " + user_msv.getText() + " was already exist!");
+                    alert.showAndWait();
+                } else {
+                    String sql = "INSERT INTO user(msv, name, phonenumber, email) VALUES (?,?,?,?)";
+                    pst = connect.prepareStatement(sql);
+                    pst.setString(1, user_msv.getText());
+                    pst.setString(2, user_name.getText());
+                    pst.setString(3, user_phoneNumber.getText());
+                    pst.setString(4, user_email.getText());
+
+                    pst.executeUpdate();
+                    connect.commit(); // commit de update vao csdl
+                    pst.close();
+
+                    if(getData.path != "" || getData.path != null) {
+                        String sqlI = "UPDATE user SET image = ? WHERE msv = ?";
+                        pst = connect.prepareStatement(sqlI);
+                        String uri = getData.path;
+                        uri = uri.replace("\\", "\\\\");
+                        pst.setString(1, uri);
+                        pst.setString(2, user_msv.getText());
+                        pst.executeUpdate();
+                        connect.commit();
+                    }
+
+                    String sqlSetPass = "UPDATE user SET password = msv WHERE msv = ?";
+
+                    pst = connect.prepareStatement(sqlSetPass);
+                    pst.setString(1, user_msv.getText());
+                    pst.executeUpdate();
+                    connect.commit();
+
+                    // thông báo thêm thành công
+
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Information Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Successfully Added!");
+                    alert.showAndWait();
+
+                    usersShowListData(); // show ra bảng
+                    usersClear(); // clear fields
+                }
+            } catch (Exception e) {
+                connect.rollback();
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void usersUpdate() {
+        if (user_msv.getText().isEmpty()
+                || user_name.getText().isEmpty()
+                || user_phoneNumber.getText().isEmpty()
+                || user_email.getText().isEmpty()) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error Message");
+            alert.setHeaderText(null);
+            alert.setContentText("Please fill all blank fields");
+            alert.showAndWait();
+        } else {
+            connect = database.connectDB();
+            try {
+                String sql = "SELECT msv FROM user WHERE msv = ?";
+                pst = connect.prepareStatement(sql);
+                pst.setString(1, user_msv.getText());
+                rs = pst.executeQuery();
+
+                // nếu tìm thấy thì update ở 2 table
+                if (rs.next()) {
+                    Optional<ButtonType> option = showChooseAlter(Alert.AlertType.INFORMATION, "Information Message"
+                            , "Are you sure you want to UPDATE student with student code: "+ user_msv.getText() +"?");
+
+                    if (option.get().equals(ButtonType.OK)) {
+                        String sqlUpdate = "UPDATE user SET name = ?, phonenumber = ?, email = ? " +
+                                "WHERE msv = ?";
+                        pst = connect.prepareStatement(sqlUpdate);
+                        pst.setString(1, user_name.getText());
+                        pst.setString(2, user_phoneNumber.getText());
+                        pst.setString(3, user_email.getText());
+                        pst.setString(4, user_msv.getText());
+
+                        pst.executeUpdate();
+
+                        if(getData.path != "" && getData.path != null) {
+                            String sqlI = "UPDATE user SET image = ? WHERE msv = ?";
+                            pst = connect.prepareStatement(sqlI);
+                            String uri = getData.path;
+                            uri = uri.replace("\\", "\\\\");
+                            pst.setString(1, uri);
+                            pst.setString(2, user_msv.getText());
+                            pst.executeUpdate();
+                        }
+
+                        // update ở bảng issue
+                        String sqlUpdate1 = "UPDATE issue SET name = ? " +
+                                "WHERE msv = ?";
+                        pst = connect.prepareStatement(sqlUpdate1);
+                        pst.setString(1, user_name.getText());
+                        pst.setString(2, user_msv.getText());
+
+                        pst.executeUpdate();
+
+                        showAlert(Alert.AlertType.INFORMATION, "Information Message", "Successfully Updated!");
+
+                        usersShowListData();
+                        usersClear();
+                    }
+                } else {
+                    showAlert(Alert.AlertType.ERROR, "Error Message", "Student code not found!");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
     
     public void usersSearch() {
