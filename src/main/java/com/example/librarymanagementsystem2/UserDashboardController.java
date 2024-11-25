@@ -164,6 +164,12 @@ public class UserDashboardController extends DashboardBaseController implements 
     @FXML
     private AnchorPane snowContainer;
 
+    @FXML
+    private TextField dashboard_answer;
+
+    @FXML
+    private ComboBox<String> dashboard_question;
+
     private Image image;
 
     private String id = getData.username;
@@ -185,7 +191,8 @@ public class UserDashboardController extends DashboardBaseController implements 
 
     public void updateUser() throws SQLException {
         if (dashboard_name.getText().isEmpty() || dashboard_phoneNumber.getText().isEmpty()
-                || dashBoard_email.getText().isEmpty() || dashboard_password.getText().isEmpty()) {
+                || dashBoard_email.getText().isEmpty() || dashboard_password.getText().isEmpty()
+                || dashboard_question.getSelectionModel().getSelectedItem() == null || dashboard_answer.getText().isEmpty()) {
             showAlert(Alert.AlertType.ERROR, "Error Message", "Please fill all the empty fields");
         } else {
             connect = database.connectDB();
@@ -197,13 +204,16 @@ public class UserDashboardController extends DashboardBaseController implements 
                         "Are you sure you want to UPDATE your information?");
                 if (option.isPresent() && option.get() == ButtonType.OK) {
                     // Update user details
-                    String sqlUpdate = "UPDATE user SET name = ?, phonenumber = ?, email = ?, password = ? WHERE msv = ?";
+                    String sqlUpdate = "UPDATE user SET name = ?, phonenumber = ?, email = ?, password = ?," +
+                            "question = ?, answer = ? WHERE msv = ?";
                     pst = connect.prepareStatement(sqlUpdate);
                     pst.setString(1, dashboard_name.getText());
                     pst.setString(2, dashboard_phoneNumber.getText());
                     pst.setString(3, dashBoard_email.getText());
                     pst.setString(4, dashboard_password.getText());
-                    pst.setString(5, dashboard_ID.getText());
+                    pst.setString(5, dashboard_question.getSelectionModel().getSelectedItem());
+                    pst.setString(6, dashboard_answer.getText());
+                    pst.setString(7, dashboard_ID.getText());
                     pst.executeUpdate();
 
                     // Update image if provided
@@ -490,6 +500,8 @@ public class UserDashboardController extends DashboardBaseController implements 
         dashboard_phoneNumber.setText(rs.getString("phonenumber"));
         dashBoard_email.setText(rs.getString("email"));
         dashboard_password.setText(rs.getString("password"));
+        dashboard_question.setValue(rs.getString("question"));
+        dashboard_answer.setText(rs.getString("answer"));
         username.setWrapText(true);
         username.setText(rs.getString("name"));
 
@@ -643,8 +655,11 @@ public class UserDashboardController extends DashboardBaseController implements 
             // Optionally handle errors like showing a message in the UI
         }
     }
+    private String[] questionList = {"Who is your favorite teacher?", "What is your favorite food?", "What is your favorite leisure activity?"};
 
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        dashboard_question.setItems(FXCollections.observableArrayList(questionList));
+
         SnowEffect snowEffect = new SnowEffect(snowContainer, 10);
         snowEffect.startSnowfall();
         try {

@@ -1,35 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
 
-<StackPane prefWidth="400" prefHeight="500"
-           xmlns="http://javafx.com/javafx/11.0.1"
-           xmlns:fx="http://javafx.com/fxml/1"
-           fx:controller="com.example.librarymanagementsystem2.ChatBotController">
+<StackPane prefHeight="500" prefWidth="400" styleClass="root" stylesheets="@chatBot-style.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.librarymanagementsystem2.ChatBotController">
 
     <padding>
-        <Insets top="10" right="10" bottom="10" left="10"/>
+        <Insets bottom="10" left="10" right="10" top="10" />
     </padding>
 
-    <VBox spacing="10" alignment="CENTER" StackPane.alignment="CENTER">
-        <Label text="Chat with Snakebot" style="-fx-font-size: 18px;"/>
+    <VBox alignment="CENTER" spacing="10" StackPane.alignment="CENTER">
+        <Label style="-fx-font-size: 18px;" styleClass="title-label" stylesheets="@chatBot-style.css" text="Chat with Snakebot" />
 
-        <TextArea fx:id="chatArea"
-                  VBox.vgrow="ALWAYS"
-                  wrapText="true"
-                  style="-fx-font-family: 'Arial';">
+        <TextArea fx:id="chatArea" style="-fx-font-family: 'Arial';" styleClass="chat-area" stylesheets="@chatBot-style.css" wrapText="true" VBox.vgrow="ALWAYS">
         </TextArea>
 
         <HBox spacing="10">
-            <TextField fx:id="inputField"
-                       HBox.hgrow="ALWAYS"
-                       promptText="Type your message here..."/>
+            <TextField fx:id="inputField" promptText="Type your message here..." styleClass="input-field" stylesheets="@dashboardDesign.css" HBox.hgrow="ALWAYS" />
 
-            <Button fx:id="sendButton"
-                    text="Send"
-                    defaultButton="true"/>
+            <Button fx:id="sendButton" defaultButton="true" prefHeight="33.0" prefWidth="71.0" styleClass="send-button" stylesheets="@chatBot-style.css" text="Send" />
         </HBox>
     </VBox>
 
