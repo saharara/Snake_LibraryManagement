@@ -741,12 +741,15 @@ public class dashboardController extends DashboardBaseController implements Init
                     alert.setContentText("Student code: " + user_msv.getText() + " was already exist!");
                     alert.showAndWait();
                 } else {
-                    String sql = "INSERT INTO user(msv, name, phonenumber, email) VALUES (?,?,?,?)";
+                    String sql = "INSERT INTO user(msv, name, phonenumber, email, createdDate) VALUES (?,?,?,?, ?)";
                     pst = connect.prepareStatement(sql);
                     pst.setString(1, user_msv.getText());
                     pst.setString(2, user_name.getText());
                     pst.setString(3, user_phoneNumber.getText());
                     pst.setString(4, user_email.getText());
+                    Date date = new Date();
+                    java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+                    pst.setDate(5, sqlDate);
 
                     pst.executeUpdate();
                     connect.commit(); // commit de update vao csdl
