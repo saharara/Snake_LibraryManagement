@@ -177,7 +177,7 @@ public class UserDashboardController extends DashboardBaseController implements 
     public void insertAva() throws MalformedURLException {
         FileChooser open = new FileChooser();
         open.setTitle("Open Image File");
-        open.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image File", ".png", ".jpg", "*.gif"));
+        open.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image File", "*png", "*jpg", "*gif"));
 
         File file = open.showOpenDialog(main_form.getScene().getWindow());
 

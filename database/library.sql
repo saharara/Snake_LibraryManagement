@@ -15,7 +15,7 @@ CREATE TABLE book (
     title VARCHAR(225) NOT NULL,
     author VARCHAR(225) NOT NULL,
     genre VARCHAR(225) NOT NULL,
-    image VARCHAR(500) NOT NULL,
+    image VARCHAR(500),
     pub_date DATE,
     quantity INT NOT NULL,
 	remain INT NOT NULL,
