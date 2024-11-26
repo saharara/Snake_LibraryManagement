@@ -20,8 +20,10 @@ The application is designed for librarians to manage their library. The applicat
 ## Installation 
   1. Clone the project from the repository.
   2. Open the project in the IDE.
-  3. Add jar file from lib to project structure.
-  4. Run the project.
+  3. Add jar files from lib to project structure.
+  4. Create a database in SQL to store data using SQL file in the database folder.
+  5. Change the database password in the project
+  6. Run the project.
 
 ## Usage
   1. Select Usage Mode: Choose between user or admin mode.
