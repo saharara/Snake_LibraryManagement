@@ -485,7 +485,7 @@
                                 </AnchorPane>
                                 <AnchorPane fx:id="listIssue_form" layoutX="2.0" layoutY="4.0" onMouseClicked="#availableBooksSelect" prefHeight="549.0" prefWidth="1029.0" visible="false">
                                     <children>
-                                        <Label alignment="CENTER" layoutX="5.0" layoutY="7.0" prefHeight="43.0" prefWidth="1022.0" styleClass="nav-form" stylesheets="@dashboardDesign.css" text="All Issued Books" textAlignment="CENTER" textFill="WHITE">
+                                        <Label alignment="CENTER" layoutX="5.0" layoutY="7.0" prefHeight="43.0" prefWidth="1022.0" styleClass="nav-form" stylesheets="@dashboardDesign.css" text="All Issued Books" textAlignment="CENTER" textFill="#006370">
                                             <font>
                                                 <Font name="Arial" size="25.0" />
                                             </font>
