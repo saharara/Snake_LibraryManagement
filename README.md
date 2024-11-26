@@ -42,7 +42,7 @@ The application is designed for librarians to manage their library. The applicat
   5. SnakeBot: A chatbot using the Gemini 1.5 flash API to provide useful information about books users are interested in. It can translate and paraphrase responses in multiple languages.
   6. To logout account click the out icon in the bottom-left of the scence. To exit app click the exit icon in the right-top. 
 
-## Demo
+## Video Demo
 https://www.youtube.com/watch?v=jmxcAqNuoUQ&ab_channel=Vi%E1%BB%87tAnhPh%E1%BA%A1mTh%C3%BAc
 ## Future improvements
   1. Add book comments
