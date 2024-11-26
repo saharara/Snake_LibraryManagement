@@ -473,7 +473,7 @@ public class UserDashboardController extends DashboardBaseController implements 
             Optional<ButtonType> option = showChooseAlter(Alert.AlertType.INFORMATION, "Information message", "Are you sure you want to logout?");
 
             if (option.get().equals(ButtonType.OK)) {
-
+                stopMusic();
                 logout.getScene().getWindow().hide();
 
                 Parent root = FXMLLoader.load(getClass().getResource("userLogin.fxml"));
@@ -608,7 +608,7 @@ public class UserDashboardController extends DashboardBaseController implements 
             audio.setOnAction(event -> {
                 if (audio.isSelected()) {
                     audioImage.setImage(image2);
-                    if (clip != null) clip.stop(); // Turn off audio
+                    if (clip != null) stopMusic(); // Turn off audio
                 } else {
                     audioImage.setImage(image1);
                     if (clip != null) {
@@ -655,6 +655,10 @@ public class UserDashboardController extends DashboardBaseController implements 
             e.printStackTrace();
             // Optionally handle errors like showing a message in the UI
         }
+    }
+
+    public void stopMusic() {
+        clip.stop();
     }
     private String[] questionList = {"Who is your favorite teacher?", "What is your favorite food?", "What is your favorite leisure activity?"};
 
