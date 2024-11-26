@@ -608,40 +608,6 @@ public class dashboardController extends DashboardBaseController implements Init
         availableBooks_tableView.setItems(availableBooksList);
     }
 
-//    public void availableBooksSelect() {
-//        bookData bookD = availableBooks_tableView.getSelectionModel().getSelectedItem();
-//        int num = availableBooks_tableView.getSelectionModel().getSelectedIndex();
-//
-//        if(num < 0) {
-//            return;
-//        }
-//
-//        availableBooks_ISBN.setText(bookD.getIsbn());
-//        availableBooks_title.setText(bookD.getTitle());
-//        availableBooks_author.setText(bookD.getAuthor());
-//        availableBooks_genre.setText(bookD.getGenre());
-//        if(bookD.getDate() != null) {
-//            try {
-//                availableBooks_date.setValue(LocalDate.parse(String.valueOf(bookD.getDate())));
-//            } catch (Exception e) {
-//                System.out.println("loi get ngay");
-//            }
-//        } else availableBooks_date.setValue(null);
-//
-//        availableBooks_quantity.setText(String.valueOf(bookD.getQuantity()));
-//
-//        if(bookD.getImage() != null) {
-//            getData.path = bookD.getImage();
-//
-//            String uri = "file:" + bookD.getImage();
-//
-//            image = new Image(uri, 112, 137, false, true);
-//            availableBooks_imageView.setImage(image);
-//
-//        } else availableBooks_imageView.setImage(null);
-//
-//    }
-
     public void availableBooksSelect() {
         bookData bookD = availableBooks_tableView.getSelectionModel().getSelectedItem();
         int num = availableBooks_tableView.getSelectionModel().getSelectedIndex();
