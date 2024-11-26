@@ -67,7 +67,7 @@
                                         <FontAwesomeIcon fill="#006370" glyphName="DASHBOARD" size="1.5em" />
                                     </graphic>
                                 </Button>
-                                <Button fx:id="bookManagement_btn" alignment="BASELINE_LEFT" layoutX="9.0" layoutY="237.0" mnemonicParsing="false" onAction="#switchForm" prefHeight="40.0" prefWidth="180.0" styleClass="nav-btn" stylesheets="@dashboardDesign.css" text="Book Magagement" textFill="#006370">
+                                <Button fx:id="bookManagement_btn" alignment="BASELINE_LEFT" layoutX="9.0" layoutY="237.0" mnemonicParsing="false" onAction="#switchForm" prefHeight="40.0" prefWidth="180.0" styleClass="nav-btn" stylesheets="@dashboardDesign.css" text="Book Management" textFill="#006370">
                                     <font>
                                         <Font name="Arial" size="14.0" />
                                     </font>

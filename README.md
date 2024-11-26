@@ -20,7 +20,8 @@ The application is designed for librarians to manage their library. The applicat
 ## Installation 
   1. Clone the project from the repository.
   2. Open the project in the IDE.
-  3. Run the project.
+  3. Add jar file from lib to project structure.
+  4. Run the project.
 
 ## Usage
   1. Select Usage Mode: Choose between user or admin mode.
@@ -34,16 +35,16 @@ The application is designed for librarians to manage their library. The applicat
   4. User Features:
   - Dashboard: Includes a chart for statistics on books borrowed/returned by month. Users can update their personal information. The "Total Borrowed Books" section shows the number of books borrowed.
   - My Borrowed Books: Queries information about books borrowed by the user.
-  - Library: Displays books available in the library.
+  - Library: Displays available books in the library.
   - Music Player: Users can play, pause, and switch between songs in a pre-provided playlist from the publisher.
-  5. SnakeBot: A chatbot using the Gemini 1.5 flash API to provide useful information about books users are interested in. It can translate and paraphrase responses in multi-language.
+  5. SnakeBot: A chatbot using the Gemini 1.5 flash API to provide useful information about books users are interested in. It can translate and paraphrase responses in multiple languages.
   6. To logout account click the out icon in the bottom-left of the scence. To exit app click the exit icon in the right-top. 
 
 ## Demo
 
 ## Future improvements
   1. Add book comments
-  2. Add wishlist/favourite books of user.
+  2. Add the user's wishlist/favorite books.
   3. Add a function to let users play their audio
   4. Add more seasonal event effects
   5. Improve SnakeBot
