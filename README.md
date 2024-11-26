@@ -20,8 +20,10 @@ The application is designed for librarians to manage their library. The applicat
 ## Installation 
   1. Clone the project from the repository.
   2. Open the project in the IDE.
-  3. Add jar file from lib to project structure.
-  4. Run the project.
+  3. Add jar files from lib to project structure.
+  4. Create a database in SQL to store data using SQL file in the database folder.
+  5. Change the database password in the project
+  6. Run the project.
 
 ## Usage
   1. Select Usage Mode: Choose between user or admin mode.
@@ -40,8 +42,8 @@ The application is designed for librarians to manage their library. The applicat
   5. SnakeBot: A chatbot using the Gemini 1.5 flash API to provide useful information about books users are interested in. It can translate and paraphrase responses in multiple languages.
   6. To logout account click the out icon in the bottom-left of the scence. To exit app click the exit icon in the right-top. 
 
-## Demo
-
+## Video Demo
+https://www.youtube.com/watch?v=jmxcAqNuoUQ&ab_channel=Vi%E1%BB%87tAnhPh%E1%BA%A1mTh%C3%BAc
 ## Future improvements
   1. Add book comments
   2. Add the user's wishlist/favorite books.
