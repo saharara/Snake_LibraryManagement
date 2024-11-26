@@ -256,6 +256,7 @@ public class UserDashboardController extends DashboardBaseController implements 
                 Optional<ButtonType> option = showChooseAlter(Alert.AlertType.INFORMATION, "Information Message", "Are you sure you want to delete your account?");
 
                 if (option.get() == ButtonType.OK) {
+                    stopMusic();
                     String sqlDelete = "DELETE FROM user WHERE msv = ?;";
                     pst = connect.prepareStatement(sqlDelete);
                     pst.setString(1, dashboard_ID.getText());
