@@ -40,11 +40,12 @@ CREATE TABLE issue (
 	msv VARCHAR(255) NOT NULL,
     name VARCHAR(255) NOT NULL,
     isbn VARCHAR(255) NOT NULL,
-    title VARCHAR(255) NOt null,
+    title VARCHAR(255) NOT NULL,
     issueDate DATE,
     dueDate DATE,
     returnDate DATE,
 	id INT AUTO_INCREMENT PRIMARY KEY,
+    CONSTRAINT fk_isbn FOREIGN KEY (isbn) REFERENCES book(isbn),
 	CONSTRAINT fk_msv FOREIGN KEY (msv) REFERENCES user(msv) ON DELETE CASCADE
 );
 
